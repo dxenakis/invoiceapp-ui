@@ -1,0 +1,36 @@
+.container.form-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+input {
+  padding: 8px 10px;
+  border: 1px solid #d7d7d7;
+  border-radius: 6px;
+}
+
+input.invalid {
+  border-color: #e74c3c;
+  background: #fff6f6;
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+button[type="submit"] {
+  font-weight: 600;
+}

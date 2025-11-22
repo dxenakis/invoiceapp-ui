@@ -1,0 +1,18 @@
+<app-topbar
+  [publicMode]="false"
+  [preTenantMode]="false"
+  [user]="user$ | async"
+  [companies]="(companies$ | async) ?? []"
+  [activeCompanyId]="activeCompanyId$ | async"
+  [fiscalYear]="fiscalYear$ | async"
+  (selectCompany)="onSelectCompany($event)"
+  (logout)="onLogout()"
+></app-topbar>
+
+<div class="tenant-layout">
+  <app-sidebar></app-sidebar>
+
+  <main class="tenant-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -1,0 +1,43 @@
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--color-bg);
+  padding: 1rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 360px;
+}
+
+/* form fields */
+.form-field {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.form-field.invalid input {
+  border-color: var(--color-danger);
+}
+
+.form-field small {
+  color: var(--color-danger);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+/* error message */
+.error {
+  margin-top: 0.75rem;
+  color: var(--color-danger);
+  font-size: 0.9rem;
+  text-align: center;
+}

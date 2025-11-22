@@ -1,0 +1,78 @@
+<section class="page">
+  <header class="page-header">
+    <h1 *ngIf="itemId">Επεξεργασία Είδους</h1>
+    <h1 *ngIf="!itemId">Νέο Είδος</h1>
+  </header>
+
+  <div *ngIf="loading">Φόρτωση...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <form *ngIf="!loading" (ngSubmit)="save()">
+    <div class="form-row">
+      <label>Κωδικός *</label>
+      <input type="text" [(ngModel)]="model.code" name="code" required />
+    </div>
+
+    <div class="form-row">
+      <label>Όνομα *</label>
+      <input type="text" [(ngModel)]="model.name" name="name" required />
+    </div>
+
+    <div class="form-row">
+      <label>Όνομα 2</label>
+      <input type="text" [(ngModel)]="model.name1" name="name1" />
+    </div>
+
+    <div class="form-row">
+      <label>Κατηγορία Λογαριασμού *</label>
+      <select
+        [(ngModel)]="model.accountCategory"
+        name="accountCategory"
+        required
+      >
+        <option
+          *ngFor="let c of categories()"
+          [ngValue]="c"
+        >
+          {{ ACCOUNTING_CATEGORY_LABELS[c] }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label>Τιμή Λιανικής</label>
+      <input
+        type="number"
+        step="0.01"
+        [(ngModel)]="model.pricer"
+        name="pricer"
+      />
+    </div>
+
+    <div class="form-row">
+      <label>Τιμή Χονδρικής</label>
+      <input
+        type="number"
+        step="0.01"
+        [(ngModel)]="model.pricew"
+        name="pricew"
+      />
+    </div>
+
+    <div class="form-row">
+      <label>
+        <input
+          type="checkbox"
+          [(ngModel)]="model.active"
+          name="active"
+        />
+        Ενεργό
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="saving">Αποθήκευση</button>
+      <button type="button" (click)="cancel()">Άκυρο</button>
+    </div>
+  </form>
+</section>

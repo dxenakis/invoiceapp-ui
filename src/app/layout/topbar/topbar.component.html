@@ -1,0 +1,63 @@
+<header class="topbar">
+  <div class="left">
+    <a class="brand" [routerLink]="publicMode ? '/login' : '/companies'">
+      InvoiceApp
+    </a>
+
+    <!-- Company switcher & Fiscal Year: ΟΧΙ στο public / προαιρετικά στο pre-tenant -->
+    <ng-container *ngIf="!publicMode">
+      <select
+        class="company-switcher"
+        *ngIf="!preTenantMode && companies.length"
+        [ngModel]="activeCompanyId"
+        (ngModelChange)="onSelectCompany($event)"
+      >
+        <option *ngFor="let c of companies" [value]="c.companyId">
+          {{ c.companyName }}
+        </option>
+      </select>
+
+      <span class="fiscal-chip" *ngIf="fiscalYear">
+        FY {{ fiscalYear }}
+      </span>
+    </ng-container>
+  </div>
+
+  <div class="right">
+    <!-- Public mode: κουμπιά Login/Register -->
+    <ng-container *ngIf="publicMode; else userMenu">
+      <a
+        routerLink="/login"
+        [routerLinkActiveOptions]="{ exact: true }"
+        routerLinkActive="hidden-link"
+        class="btn-link"
+      >
+        Login
+      </a>
+
+      <a
+        routerLink="/register"
+        [routerLinkActiveOptions]="{ exact: true }"
+        routerLinkActive="hidden-link"
+        class="btn-cta"
+      >
+        Create Account
+      </a>
+    </ng-container>
+
+    <!-- Authenticated -->
+    <ng-template #userMenu>
+      <div class="user" *ngIf="user as u">
+        <div class="avatar">
+          {{ (u.fullname || u.username || '?').slice(0,1).toUpperCase() }}
+        </div>
+        <div class="meta">
+          <div class="name">{{ displayName }}</div>
+        </div>
+        <button class="btn-primary" (click)="logout.emit()">
+          Logout
+        </button>
+      </div>
+    </ng-template>
+  </div>
+</header>

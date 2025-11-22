@@ -1,0 +1,42 @@
+.container { padding: 1rem; }
+
+.company-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.company-item {
+  display: flex;
+  align-items: flex-start;            /* για να αρχίζει πάνω-πάνω το block */
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;             /* ΚΑΘΕΤΑ: name, vat, role */
+  gap: 0.25rem;
+}
+
+.name { font-weight: 600; }
+.vat { color: #555; }
+.role { color: #666; }
+
+button {
+  align-self: center;                 /* το κουμπί μένει δεξιά στη μέση */
+}
+
+.error { color: #d00; }
+
+/* Optional: λίγο “αέρα” σε μικρές οθόνες */
+@media (max-width: 600px) {
+  .company-item {
+    flex-direction: column;
+    gap: .5rem;
+  }
+  button {
+    align-self: flex-end;
+  }
+}

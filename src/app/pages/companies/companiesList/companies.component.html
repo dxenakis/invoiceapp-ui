@@ -1,0 +1,29 @@
+<section class="container">
+  <h1>Οι εταιρείες μου</h1>
+
+  <ng-container *ngIf="companies?.length; else noCompanies">
+    <ul class="company-list">
+      <li *ngFor="let c of companies" class="company-item">
+        <div class="meta">
+          <strong class="name">{{ c.companyName }}</strong>
+          <small class="vat">Α.Φ.Μ.: {{ c.Vat }}</small>
+          <!-- <small class="role">Ρόλος: {{ c.role }}</small> -->
+        </div>
+        <button (click)="onSelect(c)" [disabled]="loading">
+          Επιλογή
+        </button>
+      </li>
+    </ul>
+  </ng-container>
+
+  <ng-template #noCompanies>
+    <p>Δεν υπάρχουν εταιρείες ακόμη.</p>
+  </ng-template>
+
+  <p *ngIf="errorMsg" class="error">{{ errorMsg }}</p>
+
+  <!-- σωστό routerLink -->
+  <button [routerLink]="['/companies/create']">
+    Δημιουργία Νέας Εταιρείας
+  </button>
+</section>

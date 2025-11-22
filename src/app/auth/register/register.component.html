@@ -1,0 +1,62 @@
+<div class="register-wrapper">
+  <div class="card register-card">
+    <h1>Εγγραφή</h1>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+      <div class="form-field" [class.invalid]="f['firstName'].touched && f['firstName'].invalid">
+      <label for="firstName">Όνομα</label>
+      <input id="firstName" type="text" formControlName="firstName" placeholder="π.χ. Νίκος" />
+      <small *ngIf="f['firstName'].touched && f['firstName'].hasError('required')">
+        Απαιτείται όνομα
+      </small>
+    </div>
+
+      <div class="form-field" [class.invalid]="f['lastName'].touched && f['lastName'].invalid">
+        <label for="lastName">Επώνυμο</label>
+        <input id="lastName" type="text" formControlName="lastName" placeholder="π.χ. Παπαδόπουλος" />
+        <small *ngIf="f['lastName'].touched && f['lastName'].hasError('required')">
+          Απαιτείται επώνυμο
+        </small>
+      </div>
+
+
+      <div class="form-field" [class.invalid]="f['username'].touched && f['username'].invalid">
+        <label for="username">Username</label>
+        <input id="username" type="text" formControlName="username" placeholder="π.χ. demo1" />
+        <small *ngIf="f['username'].touched && f['username'].hasError('required')">
+          Απαιτείται username
+        </small>
+        <small *ngIf="f['username'].touched && f['username'].hasError('minlength')">
+          Τουλάχιστον 4 χαρακτήρες
+        </small>
+      </div>
+
+      <div class="form-field" [class.invalid]="f['email'].touched && f['email'].invalid">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" placeholder="demo@example.com" />
+        <small *ngIf="f['email'].touched && f['email'].hasError('required')">Απαιτείται email</small>
+        <small *ngIf="f['email'].touched && f['email'].hasError('email')">Μη έγκυρο email</small>
+      </div>
+
+      <div class="form-field" [class.invalid]="f['password'].touched && f['password'].invalid">
+        <label for="password">Κωδικός</label>
+        <input id="password" type="password" formControlName="password" placeholder="••••••" />
+        <small *ngIf="f['password'].touched && f['password'].hasError('required')">
+          Απαιτείται κωδικός
+        </small>
+        <small *ngIf="f['password'].touched && f['password'].hasError('minlength')">
+          Τουλάχιστον 6 χαρακτήρες
+        </small>
+      </div>
+
+      <button type="submit" [disabled]="loading()">Δημιουργία λογαριασμού</button>
+
+      <p class="error" *ngIf="errorMsg()">{{ errorMsg() }}</p>
+
+      <p class="text-muted mt-2" style="text-align:center">
+        Έχεις ήδη λογαριασμό; <a routerLink="/login">Σύνδεση</a>
+      </p>
+    </form>
+  </div>
+</div>

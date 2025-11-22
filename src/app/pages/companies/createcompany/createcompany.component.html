@@ -1,0 +1,58 @@
+<section class="container form-wrap">
+  <h1>Δημιουργία Νέας Εταιρείας</h1>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <div class="field">
+      <label for="name">Επωνυμία *</label>
+      <input id="name" type="text" formControlName="name" [class.invalid]="f.name.touched && f.name.invalid" />
+      <small class="error" *ngIf="f.name.touched && f.name.hasError('required')">Απαιτείται επωνυμία.</small>
+      <small class="error" *ngIf="f.name.touched && f.name.hasError('minlength')">Τουλάχιστον 2 χαρακτήρες.</small>
+    </div>
+
+    <div class="field">
+      <label for="afm">Α.Φ.Μ.</label>
+      <input id="afm" type="text" formControlName="afm" [class.invalid]="f.afm.touched && f.afm.invalid" />
+      <small class="error" *ngIf="f.afm.touched && f.afm.hasError('pattern')">Το Α.Φ.Μ. πρέπει να έχει 9 ψηφία.</small>
+    </div>
+
+    <div class="field">
+      <label for="addressLine">Διεύθυνση</label>
+      <input id="addressLine" type="text" formControlName="addressLine" />
+    </div>
+
+    <div class="field">
+      <label for="city">Πόλη</label>
+      <input id="city" type="text" formControlName="city" />
+    </div>
+
+    <div class="field">
+      <label for="postalCode">Τ.Κ.</label>
+      <input id="postalCode" type="text" formControlName="postalCode" />
+    </div>
+
+    <div class="field">
+      <label for="countryCode">Χώρα (ISO κωδ.)</label>
+      <input id="countryCode" type="text" formControlName="countryCode" placeholder="π.χ. GR" />
+    </div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" [class.invalid]="f.email.touched && f.email.invalid" />
+      <small class="error" *ngIf="f.email.touched && f.email.hasError('email')">Μη έγκυρο email.</small>
+    </div>
+
+    <div class="field">
+      <label for="phone">Τηλέφωνο</label>
+      <input id="phone" type="text" formControlName="phone" />
+    </div>
+
+    <p class="error" *ngIf="serverError()">{{ serverError() }}</p>
+
+    <div class="actions">
+      <button type="button" (click)="onCancel()" [disabled]="submitting()">Άκυρο</button>
+      <button type="submit" [disabled]="submitting() || form.invalid">
+        {{ submitting() ? 'Αποθήκευση...' : 'Αποθήκευση' }}
+      </button>
+    </div>
+  </form>
+</section>

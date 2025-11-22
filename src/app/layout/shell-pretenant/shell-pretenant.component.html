@@ -1,0 +1,9 @@
+<app-topbar
+  [preTenantMode]="true"
+  [user]="(user$|async) ?? null"
+  [companies]="(companies$|async) ?? []"
+  (logout)="logout()"
+></app-topbar>
+<div class="page">
+  <router-outlet></router-outlet>
+</div>

@@ -1,1 +1,124 @@
-/* You can add global styles to this file, and also import other style files */
+/* === RESET (light normalize) === */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html, body {
+  height: 100%;
+}
+body, h1, h2, h3, h4, h5, h6, p, figure {
+  margin: 0;
+}
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+input, button, textarea, select {
+  font: inherit;
+}
+
+/* === VARIABLES === */
+:root {
+  --font-sans: "Segoe UI", "Aptos", Roboto, system-ui, -apple-system,
+               "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+
+  --color-bg: #f9fafb;
+  --color-fg: #111827;
+  --color-muted: #6b7280;
+  --color-primary: #1976d2;
+  --color-danger: #dc2626;
+  --color-border: #e5e7eb;
+
+  --radius: 6px;
+  --space: 1rem;
+}
+
+/* === TYPOGRAPHY === */
+body {
+  font-family: var(--font-sans);
+  color: var(--color-fg);
+  background: var(--color-bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.2;
+}
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.25rem; }
+
+/* === FORMS === */
+input, select, textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: #fff;
+  outline: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+/* === BUTTONS === */
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+button:hover:not(:disabled) {
+  background: #1565c0;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+button.danger {
+  background: var(--color-danger);
+}
+button.danger:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+/* === UTILITIES === */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.card {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space);
+}
+.text-muted {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  cursor: pointer;
+}
+a:hover {
+  text-decoration: underline;
+}
