@@ -1,0 +1,128 @@
+<section class="customer-edit-page container-fluid py-3">
+  <!-- ΤΙΤΛΟΣ -->
+  <div class="mb-2">
+    <h2 class="h5 mb-0" *ngIf="customerId">Επεξεργασία Πελάτη</h2>
+    <h2 class="h5 mb-0" *ngIf="!customerId">Νέος Πελάτης</h2>
+  </div>
+
+  <!-- ΜΠΑΡΑ ΦΟΡΜΑΣ -->
+  <app-crud-form-toolbar
+    [saving]="saving"
+    [showDelete]="!!customerId"
+    (saveClick)="save()"
+    (cancelClick)="cancel()"
+    (deleteClick)="deleteCustomer()"
+  ></app-crud-form-toolbar>
+
+  <!-- ΜΗΝΥΜΑΤΑ -->
+  <div *ngIf="loading" class="text-muted small mb-2">Φόρτωση...</div>
+  <div *ngIf="error" class="text-danger fw-semibold mb-2">{{ error }}</div>
+
+  <!-- ΦΟΡΜΑ -->
+  <form *ngIf="!loading" (ngSubmit)="save()" class="customer-form">
+    <div class="card customer-form-card shadow-sm border-0">
+      <div class="card-body">
+        <div class="row g-3">
+          <!-- ΚΩΔΙΚΟΣ -->
+          <div class="col-md-3">
+            <label class="form-label form-label-sm">Κωδικός *</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.code"
+              name="code"
+              required
+            />
+          </div>
+
+          <!-- ΕΠΩΝΥΜΙΑ -->
+          <div class="col-md-5">
+            <label class="form-label form-label-sm">Επωνυμία *</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.name"
+              name="name"
+              required
+            />
+          </div>
+
+          <!-- ΤΗΛΕΦΩΝΟ -->
+          <div class="col-md-4">
+            <label class="form-label form-label-sm">Τηλέφωνο</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.phone"
+              name="phone"
+            />
+          </div>
+
+          <!-- ΔΙΕΥΘΥΝΣΗ -->
+          <div class="col-md-6">
+            <label class="form-label form-label-sm">Διεύθυνση</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.address"
+              name="address"
+            />
+          </div>
+
+          <!-- ΠΟΛΗ -->
+          <div class="col-md-3">
+            <label class="form-label form-label-sm">Πόλη</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.city"
+              name="city"
+            />
+          </div>
+
+          <!-- ΤΚ -->
+          <div class="col-md-3">
+            <label class="form-label form-label-sm">Τ.Κ.</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.zip"
+              name="zip"
+            />
+          </div>
+
+          <!-- ΧΩΡΑ (ID) -->
+          <div class="col-md-3">
+            <label class="form-label form-label-sm">Χώρα (ID) *</label>
+            <input
+              type="number"
+              min="1"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.countryId"
+              name="countryId"
+              required
+            />
+            <div class="form-text" *ngIf="countryName">
+              Τρέχουσα χώρα: {{ countryName }}
+            </div>
+          </div>
+
+          <!-- INFO: created/updated -->
+          <div class="col-md-9">
+            <div class="row g-2 small text-muted mt-3">
+              <div class="col-md-4" *ngIf="createdAt">
+                Δημιουργήθηκε:
+                <strong>{{ createdAt }}</strong>
+              </div>
+              <div class="col-md-4" *ngIf="updatedAt">
+                Τελευταία ενημέρωση:
+                <strong>{{ updatedAt }}</strong>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+</section>

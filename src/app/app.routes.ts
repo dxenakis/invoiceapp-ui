@@ -96,6 +96,53 @@ export const routes: Routes = [
           (m) => m.ItemsEditComponent
         ),
     },
+ // --------- ΠΕΛΑΤΕΣ (CUSTOMERS) ---------
+    {
+      path: 'customers',
+      loadComponent: () =>
+        import('./pages/customer/customers-list/customers-list.component').then(
+          (m) => m.CustomersListComponent
+        ),
+    },
+    {
+      path: 'customers/new',
+      loadComponent: () =>
+        import('./pages/customer/customers-edit/customers-edit.component').then(
+          (m) => m.CustomersEditComponent
+        ),
+    },
+    {
+      path: 'customers/:id',
+      loadComponent: () =>
+        import('./pages/customer/customers-edit/customers-edit.component').then(
+          (m) => m.CustomersEditComponent
+        ),
+    },
+
+ // --------- ΠΡΟΜΗΘΕΥΤΕΣ (SUPPLIERS) ---------
+{
+      path: 'suppliers',
+      loadComponent: () =>
+        import('./pages/supplier/suppliers-list/suppliers-list.component').then(
+          (m) => m.SuppliersListComponent
+        ),
+    },
+    {
+      path: 'suppliers/new',
+      loadComponent: () =>
+        import('./pages/supplier/suppliers-edit/suppliers-edit.component').then(
+          (m) => m.SuppliersEditComponent
+        ),
+    },
+    {
+      path: 'suppliers/:id',
+      loadComponent: () =>
+        import('./pages/supplier/suppliers-edit/suppliers-edit.component').then(
+          (m) => m.SuppliersEditComponent
+        ),
+    },
+
+
 
     { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
   ],

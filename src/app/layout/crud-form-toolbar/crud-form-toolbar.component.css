@@ -1,0 +1,14 @@
+.form-toolbar {
+  background-color: #f3f5fa;
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #dde2f0;
+}
+
+.form-toolbar__btn {
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+}

@@ -1,78 +1,122 @@
-<section class="page">
-  <header class="page-header">
-    <h1 *ngIf="itemId">Επεξεργασία Είδους</h1>
-    <h1 *ngIf="!itemId">Νέο Είδος</h1>
-  </header>
+<section class="item-edit-page container-fluid py-3">
+  <!-- ΤΙΤΛΟΣ -->
+  <div class="mb-2">
+    <h2 class="h5 mb-0" *ngIf="itemId">Επεξεργασία Είδους</h2>
+    <h2 class="h5 mb-0" *ngIf="!itemId">Νέο Είδος</h2>
+  </div>
 
-  <div *ngIf="loading">Φόρτωση...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
+  <!-- ΓΕΝΙΚΗ ΜΠΑΡΑ ΦΟΡΜΑΣ (ERP style) -->
+  <app-crud-form-toolbar
+    [saving]="saving"
+    [showDelete]="!!itemId"
+    (saveClick)="save()"
+    (cancelClick)="cancel()"
+    (deleteClick)="deleteItem()"
+  ></app-crud-form-toolbar>
 
-  <form *ngIf="!loading" (ngSubmit)="save()">
-    <div class="form-row">
-      <label>Κωδικός *</label>
-      <input type="text" [(ngModel)]="model.code" name="code" required />
-    </div>
+  <!-- ΜΗΝΥΜΑΤΑ -->
+  <div *ngIf="loading" class="text-muted small mb-2">Φόρτωση...</div>
+  <div *ngIf="error" class="text-danger fw-semibold mb-2">{{ error }}</div>
 
-    <div class="form-row">
-      <label>Όνομα *</label>
-      <input type="text" [(ngModel)]="model.name" name="name" required />
-    </div>
+  <!-- ΦΟΡΜΑ -->
+  <form *ngIf="!loading" (ngSubmit)="save()" class="item-form">
+    <div class="card item-form-card shadow-sm border-0">
+      <div class="card-body">
+        <div class="row g-3">
+          <!-- ΚΩΔΙΚΟΣ -->
+          <div class="col-md-3">
+            <label class="form-label form-label-sm">Κωδικός *</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.code"
+              name="code"
+              required
+            />
+          </div>
 
-    <div class="form-row">
-      <label>Όνομα 2</label>
-      <input type="text" [(ngModel)]="model.name1" name="name1" />
-    </div>
+          <!-- ΠΕΡΙΓΡΑΦΗ -->
+          <div class="col-md-5">
+            <label class="form-label form-label-sm">Περιγραφή *</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.name"
+              name="name"
+              required
+            />
+          </div>
 
-    <div class="form-row">
-      <label>Κατηγορία Λογαριασμού *</label>
-      <select
-        [(ngModel)]="model.accountCategory"
-        name="accountCategory"
-        required
-      >
-        <option
-          *ngFor="let c of categories()"
-          [ngValue]="c"
-        >
-          {{ ACCOUNTING_CATEGORY_LABELS[c] }}
-        </option>
-      </select>
-    </div>
+          <!-- ΠΕΡΙΓΡΑΦΗ 2 -->
+          <div class="col-md-4">
+            <label class="form-label form-label-sm">Περιγραφή 2</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.name1"
+              name="name1"
+            />
+          </div>
 
-    <div class="form-row">
-      <label>Τιμή Λιανικής</label>
-      <input
-        type="number"
-        step="0.01"
-        [(ngModel)]="model.pricer"
-        name="pricer"
-      />
-    </div>
+          <!-- ΚΑΤΗΓΟΡΙΑ -->
+          <div class="col-md-4">
+            <label class="form-label form-label-sm">Κατηγορία</label>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="model.accountCategory"
+              name="accountCategory"
+            >
+              <option
+                *ngFor="let c of categories()"
+                [ngValue]="c"
+              >
+                {{ ACCOUNTING_CATEGORY_LABELS[c] }}
+              </option>
+            </select>
+          </div>
 
-    <div class="form-row">
-      <label>Τιμή Χονδρικής</label>
-      <input
-        type="number"
-        step="0.01"
-        [(ngModel)]="model.pricew"
-        name="pricew"
-      />
-    </div>
+          <!-- ΤΙΜΗ ΛΙΑΝΙΚΗΣ -->
+          <div class="col-md-3">
+            <label class="form-label form-label-sm">Τιμή Λιανικής</label>
+            <input
+              type="number"
+              class="form-control form-control-sm text-end"
+              [(ngModel)]="model.pricer"
+              name="pricer"
+              step="0.01"
+            />
+          </div>
 
-    <div class="form-row">
-      <label>
-        <input
-          type="checkbox"
-          [(ngModel)]="model.active"
-          name="active"
-        />
-        Ενεργό
-      </label>
-    </div>
+          <!-- ΤΙΜΗ ΧΟΝΔΡΙΚΗΣ -->
+          <div class="col-md-3">
+            <label class="form-label form-label-sm">Τιμή Χονδρικής</label>
+            <input
+              type="number"
+              class="form-control form-control-sm text-end"
+              [(ngModel)]="model.pricew"
+              name="pricew"
+              step="0.01"
+            />
+          </div>
 
-    <div class="form-actions">
-      <button type="submit" [disabled]="saving">Αποθήκευση</button>
-      <button type="button" (click)="cancel()">Άκυρο</button>
+          <!-- ΕΝΕΡΓΟ -->
+          <div class="col-md-2 d-flex align-items-end">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [(ngModel)]="model.active"
+                name="active"
+                id="item-active"
+              />
+              <label class="form-check-label" for="item-active">
+                Ενεργό
+              </label>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   </form>
 </section>

@@ -1,0 +1,42 @@
+<div class="crud-toolbar d-flex align-items-center gap-2">
+
+  <!-- ΝΕΟ -->
+  <button
+    *ngIf="showNew"
+    type="button"
+    class="btn btn-primary btn-sm crud-toolbar__btn"
+    (click)="newClick.emit()"
+  >
+    + Νέο
+  </button>
+
+  <!-- SEARCH -->
+  <input
+    type="text"
+    class="form-control form-control-sm crud-toolbar__search"
+    [placeholder]="searchPlaceholder"
+    [ngModel]="searchTerm"
+    (ngModelChange)="onSearchChange($event)"
+  />
+
+  <!-- ΕΚΤΥΠΩΣΗ -->
+  <button
+    *ngIf="showPrint"
+    type="button"
+    class="btn btn-outline-secondary btn-sm crud-toolbar__btn"
+    (click)="printClick.emit()"
+  >
+    🖨 Εκτύπωση
+  </button>
+
+  <!-- ΕΞΑΓΩΓΗ ΣΕ EXCEL -->
+  <button
+    *ngIf="showExport"
+    type="button"
+    class="btn btn-outline-secondary btn-sm crud-toolbar__btn"
+    (click)="exportClick.emit()"
+  >
+    ⬇ Excel
+  </button>
+
+</div>

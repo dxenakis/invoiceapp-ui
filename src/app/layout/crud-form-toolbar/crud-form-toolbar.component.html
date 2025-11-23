@@ -1,0 +1,35 @@
+<div class="form-toolbar d-flex align-items-center justify-content-between mb-3">
+  <div class="d-flex align-items-center gap-2">
+    <button
+      type="button"
+      class="btn btn-primary btn-sm form-toolbar__btn"
+      [disabled]="saving"
+      (click)="saveClick.emit()"
+    >
+      💾 Αποθήκευση
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-outline-secondary btn-sm form-toolbar__btn"
+      [disabled]="saving"
+      (click)="cancelClick.emit()"
+    >
+      ✖ Άκυρο
+    </button>
+
+    <button
+      *ngIf="showDelete"
+      type="button"
+      class="btn btn-outline-danger btn-sm form-toolbar__btn"
+      [disabled]="saving"
+      (click)="deleteClick.emit()"
+    >
+      🗑 Διαγραφή
+    </button>
+  </div>
+
+  <div class="small text-muted" *ngIf="saving">
+    Αποθήκευση...
+  </div>
+</div>

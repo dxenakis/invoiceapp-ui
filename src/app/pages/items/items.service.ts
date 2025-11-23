@@ -30,6 +30,7 @@ export class ItemsService {
     const now = new Date();
     const ts = now.toISOString().slice(0, 19);
     const payload: MtrlRequest = { ...req, updatedAt: ts };
+    //console.log(`${this.baseUrl}/${id}`);
     return this.http.put<MtrlResponse>(`${this.baseUrl}/${id}`, payload);
   }
 

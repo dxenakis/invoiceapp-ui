@@ -1,0 +1,79 @@
+<section class="customers-page container-fluid py-3">
+  <!-- HEADER -->
+  <div class="mb-2">
+    <h2 class="h5 mb-0">Πελάτες</h2>
+  </div>
+
+  <!-- GENERIC TOOLBAR -->
+  <app-crud-toolbar
+    [(searchTerm)]="searchTerm"
+    [searchPlaceholder]="'Αναζήτηση (κωδικός / επωνυμία / τηλ / πόλη)'"
+    [showNew]="true"
+    [showPrint]="true"
+    [showExport]="true"
+    (newClick)="newCustomer()"
+    (printClick)="printCustomers()"
+    (exportClick)="exportCustomers()"
+  ></app-crud-toolbar>
+
+  <!-- MESSAGES -->
+  <div *ngIf="loading" class="text-muted small mb-2">Φόρτωση…</div>
+  <div *ngIf="error" class="text-danger fw-semibold mb-2">{{ error }}</div>
+
+  <!-- TABLE CARD -->
+  <div *ngIf="page" class="card customers-card shadow-sm border-0">
+    <div class="table-responsive">
+      <table class="table table-sm align-middle mb-0 customers-table">
+        <thead>
+          <tr>
+            <th><span class="x-column-header-text-inner">Κωδικός</span></th>
+            <th><span class="x-column-header-text-inner">Επωνυμία</span></th>
+            <th><span class="x-column-header-text-inner">Τηλέφωνο</span></th>
+            <th><span class="x-column-header-text-inner">Πόλη</span></th>
+            <th><span class="x-column-header-text-inner">Χώρα</span></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let customer of filteredCustomers"
+            (click)="selectCustomer(customer)"
+            (dblclick)="editCustomer(customer)"
+            [class.selected]="customer === selectedCustomer"
+          >
+            <td>{{ customer.code }}</td>
+            <td>{{ customer.name }}</td>
+            <td>{{ customer.phone || '-' }}</td>
+            <td>{{ customer.city || '' }}</td>
+            <td>{{ customer.countryName || (customer.countryId || '') }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PAGINATION -->
+  <div *ngIf="page" class="d-flex align-items-center gap-2 mt-3">
+    <button
+      type="button"
+      class="btn btn-outline-secondary btn-sm rounded-pill"
+      [disabled]="page.number === 0"
+      (click)="loadPage(page.number - 1)"
+    >
+      ← Προηγούμενη
+    </button>
+
+    <span class="small text-muted">
+      Σελίδα {{ page.number + 1 }} από {{ page.totalPages }}
+    </span>
+
+    <button
+      type="button"
+      class="btn btn-outline-secondary btn-sm rounded-pill"
+      [disabled]="page.number + 1 >= page.totalPages"
+      (click)="loadPage(page.number + 1)"
+    >
+      Επόμενη →
+    </button>
+  </div>
+</section>

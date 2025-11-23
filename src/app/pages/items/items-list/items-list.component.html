@@ -1,66 +1,75 @@
-<section class="page">
-  <header class="page-header">
-    <h1>Είδη</h1>
-    <button type="button" (click)="newItem()">Νέο είδος</button>
-  </header>
+<section class="items-page container-fluid py-3">
+<!-- HEADER -->
+<div class="mb-2">
+  <h2 class="h5 mb-0">Είδη</h2>
+</div>
 
-  <div class="toolbar">
-    <input
-      type="text"
-      placeholder="Αναζήτηση (κωδικός / όνομα)..."
-      [(ngModel)]="searchTerm"
-    />
+<!-- GENERIC TOOLBAR -->
+<app-crud-toolbar
+  [(searchTerm)]="searchTerm"
+  [searchPlaceholder]="'Αναζήτηση (κωδικός / όνομα)'"
+  [showNew]="true"
+  [showPrint]="true"
+  [showExport]="true"
+  (newClick)="newItem()"
+  (printClick)="printItems()"
+  (exportClick)="exportItems()"
+></app-crud-toolbar>
+
+  <!-- MESSAGES -->
+  <div *ngIf="loading" class="text-muted small mb-2">Φόρτωση…</div>
+  <div *ngIf="error" class="text-danger fw-semibold mb-2">{{ error }}</div>
+
+  <!-- TABLE CARD -->
+  <div *ngIf="page" class="card items-card shadow-sm border-0">
+    <div class="table-responsive">
+      <table class="table table-sm align-middle mb-0 items-table">
+        <thead>
+          <tr>
+            <th><span class="x-column-header-text-inner">Κωδικός</span></th>
+            <th><span class="x-column-header-text-inner">Περιγραφή</span></th>
+            <th><span class="x-column-header-text-inner">Κατηγορία</span></th>
+            <th><span class="x-column-header-text-inner">Λιανική</span></th>
+            <th><span class="x-column-header-text-inner">Χονδρική</span></th>
+            <th><span class="x-column-header-text-inner">Ενεργό</span></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let item of filteredItems"
+            (click)="selectItem(item)"
+            (dblclick)="editItem(item)"
+            [class.selected]="item === selectedItem"
+          >
+            <td>{{ item.code }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ ACCOUNTING_CATEGORY_LABELS[item.accountCategory] }}</td>
+            <td>{{ item.pricer | number : '1.2-2' }}</td>
+            <td>{{ item.pricew | number : '1.2-2' }}</td>
+            <td>{{ item.active ? '✔' : '✖' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <div *ngIf="loading">Φόρτωση...</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
-
-  <table *ngIf="page">
-    <thead>
-      <tr>
-        <th>Κωδ.</th>
-        <th>Όνομα</th>
-        <th>Όνομα 2</th>
-        <th>Κατηγορία</th>
-        <th>Λιανική</th>
-        <th>Χονδρική</th>
-        <th>Ενεργό</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        *ngFor="let item of filteredItems"
-        (dblclick)="editItem(item)"
-      >
-        <td>{{ item.code }}</td>
-        <td>{{ item.name }}</td>
-        <td>{{ item.name1 }}</td>
-        <td>{{ ACCOUNTING_CATEGORY_LABELS[item.accountCategory] }}</td>
-        <td>{{ item.pricer | number : '1.2-2' }}</td>
-        <td>{{ item.pricew | number : '1.2-2' }}</td>
-        <td>{{ item.active ? '✔' : '✖' }}</td>
-        <td>
-          <button type="button" (click)="editItem(item)">Επεξεργασία</button>
-          <button type="button" (click)="deleteItem(item)">Διαγραφή</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div *ngIf="page" class="pagination">
+  <!-- PAGINATION -->
+  <div *ngIf="page" class="d-flex align-items-center gap-2 mt-3">
     <button
       type="button"
+      class="btn btn-outline-secondary btn-sm rounded-pill"
       [disabled]="page.number === 0"
       (click)="loadPage(page.number - 1)"
     >
       ← Προηγούμενη
     </button>
 
-    <span>Σελίδα {{ page.number + 1 }} από {{ page.totalPages }}</span>
+    <span class="small text-muted">Σελίδα {{ page.number + 1 }} από {{ page.totalPages }}</span>
 
     <button
       type="button"
+      class="btn btn-outline-secondary btn-sm rounded-pill"
       [disabled]="page.number + 1 >= page.totalPages"
       (click)="loadPage(page.number + 1)"
     >

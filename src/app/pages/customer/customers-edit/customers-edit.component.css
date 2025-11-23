@@ -1,12 +1,12 @@
-/* Φόντο και font, ίδιο ύφος με items-list */
-.item-edit-page {
+/* Φόντο και font, ίδιο ύφος με items-edit */
+.customer-edit-page {
   background-color: #f5f7fb;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
 }
 
 /* Κάρτα φόρμας */
-.item-form-card {
+.customer-form-card {
   border-radius: 8px;
 }
 
@@ -18,13 +18,13 @@
   color: #4b5563;
 }
 
-/* Inputs & selects λίγο πιο “μαζεμένα” */
-.item-form .form-control-sm,
-.item-form .form-select-sm {
+/* Inputs λίγο πιο “μαζεμένα” */
+.customer-form .form-control-sm,
+.customer-form .form-select-sm {
   font-size: 0.9rem;
 }
 
 /* Λίγο πιο σφιχτό padding μέσα στην κάρτα */
-.item-form .card-body {
+.customer-form .card-body {
   padding: 1rem 1.25rem;
 }

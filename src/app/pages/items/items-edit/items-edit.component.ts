@@ -9,13 +9,14 @@ import {
   MtrlResponse,
 } from '../items.models';
 import { ItemsService } from '../items.service';
+import { CrudFormToolbarComponent } from '../../../layout/crud-form-toolbar/crud-form-toolbar.component';
 
 @Component({
   standalone: true,
   selector: 'app-items-edit',
   templateUrl: './items-edit.component.html',
   styleUrls: ['./items-edit.component.css'],
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, CrudFormToolbarComponent],
 })
 export class ItemsEditComponent implements OnInit {
   itemId?: number;
@@ -55,15 +56,18 @@ export class ItemsEditComponent implements OnInit {
     this.loading = true;
     this.itemsService.get(id).subscribe({
       next: (res: MtrlResponse) => {
-        this.model = {
-          code: res.code,
-          name: res.name,
-          name1: res.name1 ?? '',
-          accountCategory: res.accountCategory,
-          pricer: res.pricer,
-          pricew: res.pricew,
-          active: res.active,
-        };
+      this.model = {
+        code: res.code,
+        name: res.name,
+        name1: res.name1 ?? '',
+        accountCategory: res.accountCategory,
+        pricer: res.pricer,
+        pricew: res.pricew,
+        active: res.active,
+        createdAt: res.createdAt ?? undefined,
+        updatedAt: res.updatedAt ?? undefined,
+      };
+
         this.loading = false;
       },
       error: (err) => {
@@ -97,11 +101,35 @@ export class ItemsEditComponent implements OnInit {
     });
   }
 
+  deleteItem(): void {
+    if (!this.itemId) {
+      return;
+    }
+
+    if (!confirm('Θέλεις σίγουρα να διαγράψεις αυτό το είδος;')) {
+      return;
+    }
+
+    this.saving = true;
+
+    this.itemsService.delete(this.itemId).subscribe({
+      next: () => {
+        this.saving = false;
+        this.router.navigate(['/app/items']);
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = 'Αποτυχία διαγραφής.';
+        this.saving = false;
+      },
+    });
+  }
+
   cancel(): void {
     this.router.navigate(['/app/items']);
   }
 
-categories(): AccountingCategory[] {
+  categories(): AccountingCategory[] {
     return Object.values(AccountingCategory) as AccountingCategory[];
   }
 }
