@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { LookupsService, CountryLookup } from '../../../core/services/lookups.service';
 import { CrudFormToolbarComponent } from '../../../layout/crud-form-toolbar/crud-form-toolbar.component';
 import { CustomersService } from '../customers.service';
 import { CustomerRequest, CustomerResponse } from '../customer.models';
@@ -26,8 +26,8 @@ export class CustomersEditComponent implements OnInit {
     city: '',
     zip: '',
     countryId: null,
-  };
-
+  };  
+  countries: CountryLookup[] = [];
   loading = false;
   saving = false;
   error?: string;
@@ -40,7 +40,8 @@ export class CustomersEditComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private customersService: CustomersService
+    private customersService: CustomersService,
+    private lookups: LookupsService
   ) {}
 
   ngOnInit(): void {
@@ -49,6 +50,16 @@ export class CustomersEditComponent implements OnInit {
       this.customerId = +idParam;
       this.loadCustomer(this.customerId);
     }
+      this.lookups.getCountries().subscribe({
+    next: (countries) => {
+      this.countries = countries ?? [];
+    },
+    error: (err) => {
+      console.error('Αποτυχία φόρτωσης χωρών', err);
+      this.countries = [];
+    },
+  });
+    
   }
 
   loadCustomer(id: number): void {

@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { LookupsService, CountryLookup } from '../../../core/services/lookups.service';
 import { CrudFormToolbarComponent } from '../../../layout/crud-form-toolbar/crud-form-toolbar.component';
 import { SuppliersService } from '../suppliers.service';
 import { SupplierRequest, SupplierResponse } from '../supplier.models';
@@ -27,7 +27,7 @@ export class SuppliersEditComponent implements OnInit {
     zip: '',
     countryId: null,
   };
-
+  countries: CountryLookup[] = [];
   loading = false;
   saving = false;
   error?: string;
@@ -39,7 +39,8 @@ export class SuppliersEditComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private suppliersService: SuppliersService
+    private suppliersService: SuppliersService,
+    private lookups: LookupsService
   ) {}
 
   ngOnInit(): void {
@@ -48,6 +49,15 @@ export class SuppliersEditComponent implements OnInit {
       this.supplierId = +idParam;
       this.loadSupplier(this.supplierId);
     }
+     this.lookups.getCountries().subscribe({
+    next: (countries) => {
+      this.countries = countries ?? [];
+    },
+    error: (err) => {
+      console.error('Αποτυχία φόρτωσης χωρών', err);
+      this.countries = [];
+    },
+  });
   }
 
   loadSupplier(id: number): void {

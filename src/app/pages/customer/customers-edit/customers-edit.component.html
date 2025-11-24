@@ -92,20 +92,27 @@
           </div>
 
           <!-- ΧΩΡΑ (ID) -->
+                    <!-- ΧΩΡΑ -->
           <div class="col-md-3">
-            <label class="form-label form-label-sm">Χώρα (ID) *</label>
-            <input
-              type="number"
-              min="1"
-              class="form-control form-control-sm"
+            <label class="form-label form-label-sm">Χώρα *</label>
+            <select
+              class="form-select form-select-sm"
               [(ngModel)]="model.countryId"
               name="countryId"
               required
-            />
+            >
+              <option [ngValue]="null">-- Επιλέξτε χώρα --</option>
+              <option *ngFor="let c of countries" [ngValue]="c.id">
+                {{ c.name }} ({{ c.isoCode }})
+              </option>
+            </select>
+
+            <!-- Προαιρετικό: για να ξέρεις τι είχες πριν -->
             <div class="form-text" *ngIf="countryName">
-              Τρέχουσα χώρα: {{ countryName }}
+              Τρέχουσα χώρα (από server): {{ countryName }}
             </div>
           </div>
+
 
           <!-- INFO: created/updated -->
           <div class="col-md-9">
