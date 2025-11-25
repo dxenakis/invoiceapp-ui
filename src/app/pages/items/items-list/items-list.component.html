@@ -29,6 +29,8 @@
             <th><span class="x-column-header-text-inner">Κωδικός</span></th>
             <th><span class="x-column-header-text-inner">Περιγραφή</span></th>
             <th><span class="x-column-header-text-inner">Κατηγορία</span></th>
+            <th><span class="x-column-header-text-inner">Μονάδα</span></th>
+            <th><span class="x-column-header-text-inner">ΦΠΑ</span></th>
             <th><span class="x-column-header-text-inner">Λιανική</span></th>
             <th><span class="x-column-header-text-inner">Χονδρική</span></th>
             <th><span class="x-column-header-text-inner">Ενεργό</span></th>
@@ -45,6 +47,8 @@
             <td>{{ item.code }}</td>
             <td>{{ item.name }}</td>
             <td>{{ ACCOUNTING_CATEGORY_LABELS[item.accountCategory] }}</td>
+            <td>{{ getMtrUnitDisplay(item.mtrunitId) }}</td>
+            <td>{{ getVatDisplay(item.vatId) }}</td>
             <td>{{ item.pricer | number : '1.2-2' }}</td>
             <td>{{ item.pricew | number : '1.2-2' }}</td>
             <td>{{ item.active ? '✔' : '✖' }}</td>

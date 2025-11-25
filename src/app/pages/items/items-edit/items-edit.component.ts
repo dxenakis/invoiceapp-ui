@@ -10,6 +10,8 @@ import {
 } from '../items.models';
 import { ItemsService } from '../items.service';
 import { CrudFormToolbarComponent } from '../../../layout/crud-form-toolbar/crud-form-toolbar.component';
+// ΝΕΟ:
+import {  LookupsService,  MtrUnitLookup,  VatLookup,} from '../../../core/services/lookups.service';
 
 @Component({
   standalone: true,
@@ -21,16 +23,20 @@ import { CrudFormToolbarComponent } from '../../../layout/crud-form-toolbar/crud
 export class ItemsEditComponent implements OnInit {
   itemId?: number;
 
-  model: MtrlRequest = {
+    model: MtrlRequest = {
     code: '',
     name: '',
     name1: '',
     accountCategory: AccountingCategory.EMPOREVMATA,
     pricer: 0,
     pricew: 0,
+    mtrunitId: null,  // NEW
+    vatId: null,      // NEW
     active: true,
   };
 
+  mtrUnits: MtrUnitLookup[] = [];
+  vats: VatLookup[] = [];
   ACCOUNTING_CATEGORY = AccountingCategory;
   ACCOUNTING_CATEGORY_LABELS = ACCOUNTING_CATEGORY_LABELS;
 
@@ -41,10 +47,15 @@ export class ItemsEditComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private itemsService: ItemsService
+    private itemsService: ItemsService,
+    private lookups: LookupsService 
   ) {}
 
-  ngOnInit(): void {
+ ngOnInit(): void {
+    // πρώτα φορτώνουμε τα lookups
+    this.loadLookups();
+
+   
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam && idParam !== 'new') {
       this.itemId = +idParam;
@@ -52,31 +63,54 @@ export class ItemsEditComponent implements OnInit {
     }
   }
 
-  loadItem(id: number): void {
+   private loadLookups(): void {
+    this.lookups.getMtrUnits().subscribe({
+      next: (units) => (this.mtrUnits = units),
+      error: (err) => {
+        console.error('Error loading MtrUnits', err);
+      },
+    });
+
+    this.lookups.getVats().subscribe({
+      next: (vats) => (this.vats = vats),
+      error: (err) => {
+        console.error('Error loading Vats', err);
+      },
+    });
+  }
+
+
+    loadItem(id: number): void {
     this.loading = true;
     this.itemsService.get(id).subscribe({
       next: (res: MtrlResponse) => {
-      this.model = {
-        code: res.code,
-        name: res.name,
-        name1: res.name1 ?? '',
-        accountCategory: res.accountCategory,
-        pricer: res.pricer,
-        pricew: res.pricew,
-        active: res.active,
-        createdAt: res.createdAt ?? undefined,
-        updatedAt: res.updatedAt ?? undefined,
-      };
+        this.model = {
+          code: res.code,
+          name: res.name,
+          name1: res.name1 ?? '',
+          accountCategory: res.accountCategory,
+          pricer: res.pricer,
+          pricew: res.pricew,
+
+          // ΝΕΑ ΠΕΔΙΑ από το backend
+          mtrunitId: res.mtrunitId ?? null,
+          vatId: res.vatId ?? null,
+
+          active: res.active,
+          createdAt: res.createdAt ?? undefined,
+          updatedAt: res.updatedAt ?? undefined,
+        };
 
         this.loading = false;
       },
       error: (err) => {
         console.error(err);
-        this.error = 'Αποτυχία φόρτωσης είδους.';
+        this.error = 'Αποτυχία φόρτωσης.';
         this.loading = false;
       },
     });
   }
+
 
   save(): void {
     this.saving = true;

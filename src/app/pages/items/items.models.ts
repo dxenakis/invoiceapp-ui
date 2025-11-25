@@ -27,6 +27,12 @@ export interface MtrlResponse {
   accountCategory: AccountingCategory;
   pricer: number;
   pricew: number;
+
+  mtrunitId: number | null;
+  mtrunitCode: string | null;
+  vatId: number | null;
+  vatCode: string | null;
+
   active: boolean;
   createdAt: string;
   updatedAt: string;
@@ -39,6 +45,10 @@ export interface MtrlRequest {
   accountCategory: AccountingCategory;
   pricer: number;
   pricew: number;
+  
+  mtrunitId: number | null;
+  vatId: number | null;
+
   active: boolean;
   createdAt?: string | null;
   updatedAt?: string | null;

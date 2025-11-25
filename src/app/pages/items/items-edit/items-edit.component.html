@@ -75,6 +75,36 @@
             </select>
           </div>
 
+          <!-- ΜΟΝΑΔΑ ΜΕΤΡΗΣΗΣ -->
+          <div class="col-md-4">
+            <label class="form-label form-label-sm">Μονάδα μέτρησης</label>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="model.mtrunitId"
+              name="mtrunitId"
+            >
+              <option [ngValue]="null">-- Επιλέξτε μονάδα --</option>
+              <option *ngFor="let u of mtrUnits" [ngValue]="u.id">
+                {{ u.code }} - {{ u.name }}
+              </option>
+            </select>
+          </div>
+
+          <!-- ΦΠΑ -->
+          <div class="col-md-4">
+            <label class="form-label form-label-sm">ΦΠΑ</label>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="model.vatId"
+              name="vatId"
+            >
+              <option [ngValue]="null">-- Επιλέξτε ΦΠΑ --</option>
+              <option *ngFor="let v of vats" [ngValue]="v.id">
+                {{ v.description }}  <!-- ({{ v.rate }}%)  -->
+              </option>
+            </select>
+          </div>
+          
           <!-- ΤΙΜΗ ΛΙΑΝΙΚΗΣ -->
           <div class="col-md-3">
             <label class="form-label form-label-sm">Τιμή Λιανικής</label>

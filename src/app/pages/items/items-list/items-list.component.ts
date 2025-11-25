@@ -4,11 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ItemsService } from '../items.service';
 import { CrudToolbarComponent } from '../../../layout/crud-toolbar/crud-toolbar.component';
-import {
-  MtrlResponse,
-  Page,
-  ACCOUNTING_CATEGORY_LABELS,
-} from '../items.models';
+import {  MtrlResponse,  Page,  ACCOUNTING_CATEGORY_LABELS,} from '../items.models';
+import { LookupsService, VatLookup, MtrUnitLookup} from '../../../core/services/lookups.service';
 
 @Component({
   standalone: true,
@@ -22,20 +19,63 @@ export class ItemsListComponent implements OnInit {
   loading = false;
   error?: string;
   searchTerm = '';
+  mtrUnits: MtrUnitLookup[] = [];  // lookup μονάδων
+  vats: VatLookup[] = [];          // lookup ΦΠΑ
 
-  // για την επιλογή γραμμής (SoftOne-style)
   selectedItem: MtrlResponse | null = null;
 
   ACCOUNTING_CATEGORY_LABELS = ACCOUNTING_CATEGORY_LABELS;
 
   constructor(
     private itemsService: ItemsService,
-    private router: Router
+    private router: Router,
+    private lookups: LookupsService,
   ) {}
 
   ngOnInit(): void {
     this.loadPage(0);
+
+    // φορτώνουμε Μονάδες Μ. και ΦΠΑ μια φορά
+    this.lookups.getMtrUnits().subscribe({
+      next: (units) => (this.mtrUnits = units),
+      error: (err) => console.error('Error loading MtrUnit lookups', err),
+    });
+
+    this.lookups.getVats().subscribe({
+      next: (vats) => (this.vats = vats),
+      error: (err) => console.error('Error loading VAT lookups', err),
+    });
+
+
   }
+
+  getMtrUnitDisplay(mtrunitId: number | null): string {
+    if (mtrunitId == null || !this.mtrUnits?.length) {
+      return '-';
+    }
+
+    const u = this.mtrUnits.find((x) => x.id === mtrunitId);
+    if (!u) {
+      return '-';
+    }
+
+    return `${u.code} - ${u.name}`;
+  }
+
+  getVatDisplay(vatId: number | null): string {
+    if (vatId == null || !this.vats?.length) {
+      return '-';
+    }
+
+    const v = this.vats.find((x) => x.id === vatId);
+    if (!v) {
+      return '-';
+    }
+
+    return `${v.description} `; //(${v.rate}%)`;
+    // ή `${v.code} - ${v.description} (${v.rate}%)` αν προτιμάς και τον κωδικό
+  }
+
 
   loadPage(pageIndex: number): void {
     this.loading = true;
