@@ -28,4 +28,4 @@ jobs:
       - name: Copy dist to nginx folder
         run: |
           rm -rf /var/www/invoiceapp-ui/*
-          cp -r dist/invoice-ui/* /var/www/invoiceapp-ui/
+          cp -r dist/invoice-ui/browser/* /var/www/invoiceapp-ui/
