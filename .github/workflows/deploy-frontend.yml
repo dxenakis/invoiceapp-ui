@@ -1,0 +1,31 @@
+name: Build & Deploy Frontend
+
+on:
+  push:
+    branches:
+      - master      # αν το κεντρικό σου branch είναι master
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Angular (production)
+        run: npm run build -- --configuration production
+
+      - name: Copy dist to nginx folder
+        run: |
+          rm -rf /var/www/invoiceapp-ui/*
+          cp -r dist/invoice-ui/browser/* /var/www/invoiceapp-ui/
