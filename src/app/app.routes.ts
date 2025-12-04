@@ -209,6 +209,23 @@ export const routes: Routes = [
     ),
 },
 
+// μέσα στα children του ShellAppComponent, στο group "settings"
+{
+  path: 'settings/document-types',
+  loadComponent: () =>
+    import('./pages/document-types/document-types-list/document-types-list.component').then(
+      (m) => m.DocumentTypesListComponent
+    ),
+},
+{
+  path: 'settings/document-types/:id',
+  loadComponent: () =>
+    import('./pages/document-types/document-types-edit/document-types-edit.component').then(
+      (m) => m.DocumentTypesEditComponent
+    ),
+},
+
+
     { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
   ],
 },

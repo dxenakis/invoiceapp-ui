@@ -1,0 +1,104 @@
+<!-- src/app/pages/document-types/document-types-edit/document-types-edit.component.html -->
+<section class="doctype-edit-page container-fluid py-3">
+  <div class="mb-2">
+    <h2 class="h5 mb-0">
+      Τύπος Παραστατικού
+      <span *ngIf="docTypeId">#{{ docTypeId }}</span>
+      <span *ngIf="!docTypeId">(Νέος)</span>
+    </h2>
+  </div>
+
+  <app-crud-form-toolbar
+    [saving]="saving"
+    [showDelete]="!!docTypeId"
+    (saveClick)="save()"
+    (deleteClick)="delete()"
+    (cancelClick)="cancel()"
+  ></app-crud-form-toolbar>
+
+  <div *ngIf="loading" class="alert alert-info mt-2">
+    Φόρτωση δεδομένων...
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger mt-2">
+    {{ error }}
+  </div>
+
+  <div class="card mt-3" *ngIf="!loading">
+    <div class="card-body">
+      <div class="row g-3">
+        <!-- ΚΩΔΙΚΟΣ -->
+        <div class="col-md-3">
+          <label class="form-label form-label-sm">Κωδικός *</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.code"
+            name="code"
+          />
+        </div>
+
+        <!-- ΠΕΡΙΓΡΑΦΗ -->
+        <div class="col-md-9">
+          <label class="form-label form-label-sm">Περιγραφή *</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.description"
+            name="description"
+          />
+        </div>
+
+        <!-- DOMAIN -->
+        <div class="col-md-4">
+          <label class="form-label form-label-sm">Domain *</label>
+          <select
+            class="form-select form-select-sm"
+            [(ngModel)]="model.domain"
+            name="domain"
+            (ngModelChange)="onDomainChange($event)"
+          >
+            <option [ngValue]="null">-- Επιλογή --</option>
+            <option *ngFor="let d of domains" [ngValue]="d.code">
+              {{ d.code }} - {{ d.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- ΣΕΙΡΑ ΠΑΡΑΣΤΑΤΙΚΟΥ (TPRMS) -->
+        <div class="col-md-4">
+          <label class="form-label form-label-sm">Κινηση Πελάτη</label>
+          <select
+            class="form-select form-select-sm"
+            [(ngModel)]="model.tprmsId"
+            name="tprmsId"
+            [disabled]="!model.domain || !tprmsOptions.length"
+          >
+            <option [ngValue]="null">-- Καμία --</option>
+            <option *ngFor="let t of tprmsOptions" [ngValue]="t.id">
+              {{ t.code }} - {{ t.description }}
+            </option>
+          </select>
+        </div>
+
+        <!-- ΠΑΡΑΜΕΤΡΟΠΟΙΗΣΗ ΑΠΟΘΗΚΗΣ (ITEPRMS) -->
+        <div class="col-md-4">
+          <label class="form-label form-label-sm">
+            Κίνηση Αποθήκης
+          </label>
+          <select
+            class="form-select form-select-sm"
+            [(ngModel)]="model.iteprmsId"
+            name="iteprmsId"
+            [disabled]="!model.domain || !iteprmsOptions.length"
+          >
+            <option [ngValue]="null">-- Καμία --</option>
+            <option *ngFor="let i of iteprmsOptions" [ngValue]="i.id">
+              {{ i.code }} - {{ i.description }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
