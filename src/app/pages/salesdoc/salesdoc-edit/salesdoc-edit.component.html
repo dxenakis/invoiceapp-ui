@@ -1,0 +1,463 @@
+<section class="salesdoc-edit container-fluid py-3">
+  <!-- HEADER TITLE + ACTIONS -->
+  <div class="mb-2 d-flex justify-content-between align-items-center">
+    <div>
+      <h2 class="h5 mb-0">Παραστατικό Πώλησης</h2>
+      <div class="small text-muted" *ngIf="vm.id && docFromBackend">
+        ID: {{ vm.id }} |
+        Αριθμός: {{ docFromBackend.printedNumber || docFromBackend.number || '-' }}
+        | Κατάσταση: {{ statusLabel }}
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-2" *ngIf="vm.id && docFromBackend">
+      <button
+        class="btn btn-outline-success btn-sm"
+        type="button"
+        (click)="postDocument()"
+        [disabled]="saving || !isDraft"
+      >
+        ✅ Οριστικοποίηση
+      </button>
+      <button
+        class="btn btn-outline-danger btn-sm"
+        type="button"
+        (click)="cancelDocument()"
+        [disabled]="saving || !isDraft"
+      >
+        ❌ Ακύρωση παραστατικού
+      </button>
+    </div>
+  </div>
+
+  <!-- FORM TOOLBAR -->
+  <app-crud-form-toolbar
+    [saving]="saving"
+    [showDelete]="false"
+    (saveClick)="onSave()"
+    (cancelClick)="onCancel()"
+  ></app-crud-form-toolbar>
+
+  <!-- MESSAGES -->
+  <div *ngIf="loading" class="text-muted small mb-2">Φόρτωση…</div>
+  <div *ngIf="error" class="text-danger fw-semibold mb-2">{{ error }}</div>
+
+  <!-- INTERNAL TABS -->
+  <div class="salesdoc-tabs mb-3">
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'document'"
+      (click)="setTab('document')"
+    >
+      Στοιχεία παραστατικού
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'delivery'"
+      (click)="setTab('delivery')"
+    >
+      Στοιχεία παράδοσης
+    </button>
+  </div>
+
+  <!-- TAB: DOCUMENT (HEADER + LINES) -->
+  <div *ngIf="activeTab === 'document'">
+    <!-- HEADER FORM -->
+    <div class="card salesdoc-form-card shadow-sm border-0 mb-3">
+      <div class="card-body salesdoc-form">
+        <div class="row g-2">
+          <!-- ΣΕΙΡΑ -->
+          <div class="col-12 col-md-3">
+            <label class="form-label form-label-sm">Σειρά</label>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="vm.header.seriesId"
+              name="seriesId"
+              (change)="onSeriesChange()"
+              [disabled]="!isDraft && isExisting"
+            >
+              <option [ngValue]="null">- Επιλέξτε -</option>
+              <option *ngFor="let s of filteredSeries" [ngValue]="s.id">
+                {{ s.code }} - {{ s.description }}
+              </option>
+            </select>
+          </div>
+
+          <!-- ΤΥΠΟΣ -->
+          <div class="col-12 col-md-3">
+            <label class="form-label form-label-sm">Τύπος</label>
+            <input
+              class="form-control form-control-sm"
+              [value]="
+                vm.header.documentTypeId ? ('[' + vm.header.documentTypeId + ']') : ''
+              "
+              readonly
+            />
+          </div>
+
+          <!-- ΥΠΟΚΑΤΑΣΤΗΜΑ -->
+          <div class="col-12 col-md-3">
+            <label class="form-label form-label-sm">Υποκατάστημα</label>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="vm.header.branchId"
+              name="branchId"
+              (change)="onBranchChange()"
+              [disabled]="!isDraft && isExisting"
+            >
+              <option [ngValue]="null">- Επιλέξτε -</option>
+              <option *ngFor="let b of branches" [ngValue]="b.id">
+                {{ b.code }} - {{ b.name }}
+              </option>
+            </select>
+          </div>
+
+          <!-- ΗΜΕΡΟΜΗΝΙΑ -->
+          <div class="col-12 col-md-3">
+            <label class="form-label form-label-sm">Ημερομηνία</label>
+            <input
+              type="date"
+              class="form-control form-control-sm"
+              [(ngModel)]="vm.header.documentDate"
+              name="documentDate"
+              [disabled]="!isDraft && isExisting"
+            />
+          </div>
+        </div>
+
+        <div class="row g-2 mt-1">
+          <!-- ΠΕΛΑΤΗΣ -->
+          <div class="col-12 col-md-6 position-relative">
+            <label class="form-label form-label-sm">Πελάτης</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="customerSearchTerm"
+              name="traderSearch"
+              placeholder="Αναζήτηση (κωδικός / επωνυμία / τηλ / email)"
+              (focus)="onCustomerFocus()"
+              (blur)="onCustomerBlur()"
+              [disabled]="!isDraft && isExisting"
+            />
+
+            <!-- Pretty panel -->
+            <div
+              class="salesdoc-customer-panel"
+              *ngIf="showCustomerPanel"
+            >
+              <div class="panel-header">
+                <span class="label">Πελάτες</span>
+                <span class="hint" *ngIf="customerSearchTerm">
+                  Αναζήτηση για: "{{ customerSearchTerm }}"
+                </span>
+              </div>
+
+              <button
+                type="button"
+                class="customer-row"
+                *ngFor="let c of filteredCustomers"
+                (click)="selectCustomer(c)"
+              >
+                <div class="line-1">
+                  <span class="code">{{ c.code }}</span>
+                  <span class="name">{{ c.name }}</span>
+                </div>
+                <div class="line-2">
+                  <span *ngIf="c.phone">{{ c.phone }}</span>
+                  <span *ngIf="c.city">• {{ c.city }}</span>
+                  <span *ngIf="c.email">• {{ c.email }}</span>
+                </div>
+              </button>
+
+              <div
+                class="empty"
+                *ngIf="!filteredCustomers.length"
+              >
+                Δεν βρέθηκαν πελάτες.
+              </div>
+            </div>
+          </div>
+
+          <!-- ΤΡΟΠΟΣ ΠΛΗΡΩΜΗΣ -->
+          <div class="col-12 col-md-3">
+            <label class="form-label form-label-sm">Τρόπος Πληρωμής</label>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="vm.header.paymentMethodId"
+              name="paymentMethodId"
+            >
+              <option [ngValue]="null">- Επιλέξτε -</option>
+              <option *ngFor="let p of paymentMethods" [ngValue]="p.id">
+                {{ p.code }} - {{ p.description }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Τρόπος Αποστολής -->
+          <div class="col-12 col-md-3">
+            <label class="form-label form-label-sm">Τρόπος Αποστολής</label>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="vm.header.shipKindId"
+              name="shipKindId"
+            >
+              <option [ngValue]="null">- Επιλέξτε -</option>
+              <option *ngFor="let sk of shipKinds" [ngValue]="sk.id">
+                {{ sk.code }} - {{ sk.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LINES -->
+    <div class="card shadow-sm border-0 salesdoc-lines-card">
+      <div class="card-header py-2 d-flex justify-content-between align-items-center">
+        <span class="small text-muted">Γραμμές παραστατικού</span>
+        <button
+          class="btn btn-outline-primary btn-sm"
+          type="button"
+          (click)="addEmptyLine()"
+          [disabled]="!isDraft && isExisting"
+        >
+          ➕ Προσθήκη γραμμής
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0 salesdoc-lines-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Κωδ. Είδους</th>
+              <th>Περιγραφή</th>
+              <th class="text-end">Ποσότητα</th>
+              <th class="text-end">Τιμή</th>
+              <th class="text-end">Έκπτωση %</th>
+              <th>Αποθήκη</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let line of vm.lines">
+              <td style="width: 40px">{{ line.lineNo }}</td>
+
+              <!-- code + search button -->
+              <td class="col-code position-relative">
+                <div class="input-with-icon">
+                  <input
+                    class="form-control form-control-sm"
+                    [(ngModel)]="line.code"
+                    [readonly]="!isDraft && isExisting"
+                  />
+                  <button
+                    type="button"
+                    class="icon-btn"
+                    (click)="openItemPanel(line)"
+                    (blur)="closeItemPanel()"
+                    [disabled]="!isDraft && isExisting"
+                  >
+                    🔍
+                  </button>
+                </div>
+
+                <!-- panel items (attached to this cell) -->
+                <div
+                  class="salesdoc-items-panel"
+                  *ngIf="activeItemLineId === line.tempId"
+                >
+                  <div class="panel-header">
+                    <span class="label">Είδη</span>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm search-input"
+                      [(ngModel)]="itemSearchTerm"
+                      placeholder="Αναζήτηση (κωδικός / περιγραφή)"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    class="item-row"
+                    *ngFor="let m of filteredItems"
+                    (click)="selectItemForLine(line, m)"
+                  >
+                    <div class="line-1">
+                      <span class="code">{{ m.code }}</span>
+                      <span class="name">{{ m.name }}</span>
+                    </div>
+                    <div class="line-2">
+                      <span>Τιμή: {{ m.pricer | number: '1.2-2' }}</span>
+                      <span *ngIf="m.vatCode">• ΦΠΑ: {{ m.vatCode }}</span>
+                    </div>
+                  </button>
+
+                  <div class="empty" *ngIf="!filteredItems.length">
+                    Δεν βρέθηκαν είδη.
+                  </div>
+                </div>
+              </td>
+
+              <!-- description -->
+              <td class="col-desc">
+                <input
+                  class="form-control form-control-sm"
+                  [(ngModel)]="line.name"
+                  [readonly]="!isDraft && isExisting"
+                />
+              </td>
+
+              <!-- qty -->
+              <td style="width: 80px">
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  class="form-control form-control-sm text-end"
+                  [(ngModel)]="line.qty"
+                  [readonly]="!isDraft && isExisting"
+                />
+              </td>
+
+              <!-- price -->
+              <td style="width: 90px">
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  class="form-control form-control-sm text-end"
+                  [(ngModel)]="line.price"
+                  [readonly]="!isDraft && isExisting"
+                />
+              </td>
+
+              <!-- discount -->
+              <td style="width: 90px">
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  class="form-control form-control-sm text-end"
+                  [(ngModel)]="line.discountRate"
+                  [readonly]="!isDraft && isExisting"
+                />
+              </td>
+
+              <!-- whouse -->
+              <td style="width: 130px">
+                <select
+                  class="form-select form-select-sm"
+                  [(ngModel)]="line.whouseId"
+                  [disabled]="!isDraft && isExisting"
+                >
+                  <option [ngValue]="null">-</option>
+                  <option *ngFor="let w of whouses" [ngValue]="w.id">
+                    {{ w.code }}
+                  </option>
+                </select>
+              </td>
+
+              <!-- delete -->
+              <td style="width: 70px" class="text-end">
+                <button
+                  type="button"
+                  class="btn btn-outline-danger btn-sm"
+                  (click)="removeLine(line)"
+                  [disabled]="!isDraft && isExisting"
+                >
+                  🗑
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        class="card-footer d-flex justify-content-end small text-muted"
+        *ngIf="docFromBackend"
+      >
+        Καθαρό: {{ docFromBackend.totalNet | number: '1.2-2' }} –
+        ΦΠΑ: {{ docFromBackend.totalVat | number: '1.2-2' }} –
+        Σύνολο: {{ docFromBackend.totalGross | number: '1.2-2' }}
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: DELIVERY -->
+  <div *ngIf="activeTab === 'delivery'">
+    <div class="card shadow-sm border-0 salesdoc-delivery-card">
+      <div class="card-body salesdoc-form">
+        <div class="row g-2">
+          <div class="col-12 col-md-6">
+            <label class="form-label form-label-sm">Διεύθυνση 1</label>
+            <input
+              class="form-control form-control-sm"
+              [(ngModel)]="vm.delivery.addressLine1"
+            />
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label form-label-sm">Διεύθυνση 2</label>
+            <input
+              class="form-control form-control-sm"
+              [(ngModel)]="vm.delivery.addressLine2"
+            />
+          </div>
+        </div>
+
+        <div class="row g-2 mt-1">
+          <div class="col-12 col-md-4">
+            <label class="form-label form-label-sm">Πόλη</label>
+            <input
+              class="form-control form-control-sm"
+              [(ngModel)]="vm.delivery.city"
+            />
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label form-label-sm">Περιοχή</label>
+            <input
+              class="form-control form-control-sm"
+              [(ngModel)]="vm.delivery.region"
+            />
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label form-label-sm">Τ.Κ.</label>
+            <input
+              class="form-control form-control-sm"
+              [(ngModel)]="vm.delivery.postalCode"
+            />
+          </div>
+        </div>
+
+        <div class="row g-2 mt-1">
+          <div class="col-12 col-md-4">
+            <label class="form-label form-label-sm">Χώρα (ISO)</label>
+            <input
+              class="form-control form-control-sm"
+              [(ngModel)]="vm.delivery.countryCode"
+              placeholder="π.χ. GR"
+            />
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label form-label-sm">Αποθήκη</label>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="vm.delivery.whouseId"
+            >
+              <option [ngValue]="null">- Επιλέξτε -</option>
+              <option *ngFor="let w of whouses" [ngValue]="w.id">
+                {{ w.code }} - {{ w.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer small text-muted">
+        Τα στοιχεία παράδοσης αποθηκεύονται μαζί με το παραστατικό όταν πατήσεις
+        «Αποθήκευση».
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,179 @@
+<!-- src/app/pages/branch/branch-edit/branch-edit.component.html -->
+<section class="branch-edit-page container-fluid py-3">
+  <div class="mb-2">
+    <h2 class="h5 mb-0">
+      Υποκατάστημα
+      <span *ngIf="branchId">#{{ branchId }}</span>
+      <span *ngIf="!branchId">(Νέο)</span>
+    </h2>
+  </div>
+
+  <app-crud-form-toolbar
+    [saving]="saving"
+    [showDelete]="!!branchId"
+    (saveClick)="save()"
+    (deleteClick)="delete()"
+    (cancelClick)="cancel()"
+  ></app-crud-form-toolbar>
+
+  <div *ngIf="loading" class="alert alert-info mt-2">
+    Φόρτωση υποκαταστήματος...
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger mt-2">
+    {{ error }}
+  </div>
+
+  <div class="card mt-3" *ngIf="!loading">
+    <div class="card-body">
+      <div class="row g-3">
+        <!-- ΚΩΔΙΚΟΣ -->
+        <div class="col-md-3">
+          <label class="form-label form-label-sm">Κωδικός *</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.code"
+            name="code"
+          />
+        </div>
+
+        <!-- ΟΝΟΜΑΣΙΑ -->
+        <div class="col-md-9">
+          <label class="form-label form-label-sm">Ονομασία *</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.name"
+            name="name"
+          />
+        </div>
+
+        <!-- Περιγραφή -->
+        <div class="col-12">
+          <label class="form-label form-label-sm">Περιγραφή</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.description"
+            name="description"
+          />
+        </div>
+
+        <!-- Διευθύνσεις -->
+        <div class="col-md-6">
+          <label class="form-label form-label-sm">Διεύθυνση 1</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.addressLine1"
+            name="addressLine1"
+          />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label form-label-sm">Διεύθυνση 2</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.addressLine2"
+            name="addressLine2"
+          />
+        </div>
+
+        <!-- Πόλη / Περιοχή / ΤΚ -->
+        <div class="col-md-4">
+          <label class="form-label form-label-sm">Πόλη</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.city"
+            name="city"
+          />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label form-label-sm">Περιοχή</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.region"
+            name="region"
+          />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label form-label-sm">Τ.Κ.</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.postalCode"
+            name="postalCode"
+          />
+        </div>
+
+        <!-- Χώρα / email / τηλέφωνο -->
+        <div class="col-md-2">
+          <label class="form-label form-label-sm">Χώρα</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.countryCode"
+            name="countryCode"
+          />
+        </div>
+
+        <div class="col-md-5">
+          <label class="form-label form-label-sm">Email</label>
+          <input
+            type="email"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.email"
+            name="email"
+          />
+        </div>
+
+        <div class="col-md-5">
+          <label class="form-label form-label-sm">Τηλέφωνο</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.phone"
+            name="phone"
+          />
+        </div>
+
+        <!-- Flags -->
+        <div class="col-md-3 d-flex align-items-center">
+          <div class="form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="hqCheck"
+              [(ngModel)]="model.headquarters"
+              name="headquarters"
+            />
+            <label class="form-check-label" for="hqCheck">
+              Κεντρικό Υποκατάστημα
+            </label>
+          </div>
+        </div>
+
+        <div class="col-md-3 d-flex align-items-center">
+          <div class="form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="activeCheck"
+              [(ngModel)]="model.active"
+              name="active"
+            />
+            <label class="form-check-label" for="activeCheck">
+              Ενεργό
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

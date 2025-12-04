@@ -1,0 +1,126 @@
+<!-- src/app/pages/company/company-edit/company-edit.component.html -->
+<section class="company-edit-page container-fluid py-3">
+  <!-- ΤΙΤΛΟΣ -->
+  <div class="mb-2">
+    <h2 class="h5 mb-0">Παραμετροποίηση &mdash; Εταιρεία</h2>
+  </div>
+
+  <!-- Toolbar φόρμας -->
+  <app-crud-form-toolbar
+    [saving]="saving"
+    [showDelete]="false"
+    (saveClick)="save()"
+    (cancelClick)="cancel()"
+  ></app-crud-form-toolbar>
+
+  <!-- Μηνύματα -->
+  <div *ngIf="loading" class="alert alert-info mt-2">
+    Φόρτωση στοιχείων εταιρείας...
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger mt-2">
+    {{ error }}
+  </div>
+
+  <div *ngIf="success" class="alert alert-success mt-2">
+    {{ success }}
+  </div>
+
+  <!-- Φόρμα -->
+  <div class="card mt-3 company-form-card" *ngIf="!loading">
+    <div class="card-body company-form">
+      <div class="row g-3">
+        <!-- ΑΦΜ -->
+        <div class="col-md-3">
+            <label class="form-label form-label-sm">Α.Φ.Μ.</label>
+            <input
+                type="text"
+                class="form-control form-control-sm"
+                [(ngModel)]="model.afm"
+                name="afm"
+                readonly
+            />
+            </div>
+
+
+        <!-- Επωνυμία -->
+        <div class="col-md-9">
+          <label class="form-label form-label-sm">Επωνυμία *</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.name"
+            name="name"
+            required
+          />
+        </div>
+
+        <!-- Διεύθυνση -->
+        <div class="col-md-6">
+          <label class="form-label form-label-sm">Διεύθυνση</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.addressLine"
+            name="addressLine"
+          />
+        </div>
+
+        <!-- Πόλη -->
+        <div class="col-md-3">
+          <label class="form-label form-label-sm">Πόλη</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.city"
+            name="city"
+          />
+        </div>
+
+        <!-- Τ.Κ. -->
+        <div class="col-md-3">
+          <label class="form-label form-label-sm">Τ.Κ.</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.postalCode"
+            name="postalCode"
+          />
+        </div>
+
+        <!-- Χώρα (κωδικός) -->
+        <div class="col-md-2">
+          <label class="form-label form-label-sm">Χώρα</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.countryCode"
+            name="countryCode"
+          />
+        </div>
+
+        <!-- Email -->
+        <div class="col-md-5">
+          <label class="form-label form-label-sm">Email</label>
+          <input
+            type="email"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.email"
+            name="email"
+          />
+        </div>
+
+        <!-- Τηλέφωνο -->
+        <div class="col-md-5">
+          <label class="form-label form-label-sm">Τηλέφωνο</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="model.phone"
+            name="phone"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

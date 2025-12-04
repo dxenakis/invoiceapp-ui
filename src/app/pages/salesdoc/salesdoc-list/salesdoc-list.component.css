@@ -1,0 +1,30 @@
+.salesdoc-page {
+  background-color: #f5f7fb;
+}
+
+.salesdoc-card {
+  border-radius: 8px;
+}
+
+.salesdoc-table thead th {
+  background-color: #f9fafb;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+}
+
+.salesdoc-table tbody td {
+  font-size: 0.85rem;
+}
+
+.salesdoc-table tr.table-active {
+  background-color: #e5f2ff;
+}
+
+.form-label-sm {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #4b5563;
+}

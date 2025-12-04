@@ -1,20 +1,192 @@
-<nav class="sidebar">
-  <a routerLink="/app/dashboard" routerLinkActive="active">
-    Dashboard
+<!-- src/app/layout/sidebar/sidebar.component.html -->
+<nav class="sidebar" [class.collapsed]="isCollapsed">
+  <!-- Header με κουμπί για μάζεμα sidebar -->
+  <div class="sidebar-header">
+    <button
+      class="collapse-btn"
+      type="button"
+      (click)="toggleSidebar()"
+      [attr.aria-label]="isCollapsed ? 'Άνοιγμα μενού' : 'Κλείσιμο μενού'"
+    >
+      <span *ngIf="!isCollapsed">⏴</span>
+      <span *ngIf="isCollapsed">⏵</span>
+    </button>
+    <span class="app-title" *ngIf="!isCollapsed">Μενού</span>
+  </div>
+
+  <!-- DASHBOARD -->
+  <a
+    routerLink="/app/dashboard"
+    routerLinkActive="active"
+    class="sidebar-link sidebar-link-dashboard"
+  >
+    <span class="icon">🏠</span>
+    <span class="label" *ngIf="!isCollapsed">Dashboard</span>
   </a>
 
-  <div class="group">Μάστερ Δεδομένα</div>
-  <a routerLink="/app/customers" routerLinkActive="active">Πελάτες</a>
-  <a routerLink="/app/items" routerLinkActive="active">Είδη</a>
-  <a routerLink="/app/suppliers" routerLinkActive="active">Προμηθευτές</a>
+  <!-- ΜΑΣΤΕΡ ΔΕΔΟΜΕΝΑ (folder) -->
+  <button
+    type="button"
+    class="group-header"
+    (click)="toggleSection('master')"
+  >
+    <span class="icon">📚</span>
+    <span class="group-title" *ngIf="!isCollapsed">Μάστερ Δεδομένα</span>
+    <span
+      class="chevron"
+      *ngIf="!isCollapsed"
+      [class.open]="isMasterOpen"
+    >
+      ⌄
+    </span>
+  </button>
 
-  <div class="group">Κίνηση</div>
-  <a routerLink="/app/sales/docs" routerLinkActive="active">
-    Παραστατικά Πωλήσεων
-  </a>
-  <a routerLink="/app/purchases/docs" routerLinkActive="active">
-    Παραστατικά Αγορών
-  </a>
-  <a routerLink="/app/receipts" routerLinkActive="active">Εισπράξεις</a>
-  <a routerLink="/app/payments" routerLinkActive="active">Πληρωμές</a>
+  <div class="section" *ngIf="isMasterOpen">
+    <a
+      routerLink="/app/customers"
+      routerLinkActive="active"
+      class="sidebar-link"
+    >
+      <span class="icon">👥</span>
+      <span class="label" *ngIf="!isCollapsed">Πελάτες</span>
+    </a>
+    <a
+      routerLink="/app/items"
+      routerLinkActive="active"
+      class="sidebar-link"
+    >
+      <span class="icon">📦</span>
+      <span class="label" *ngIf="!isCollapsed">Είδη</span>
+    </a>
+    <a
+      routerLink="/app/suppliers"
+      routerLinkActive="active"
+      class="sidebar-link"
+    >
+      <span class="icon">🏢</span>
+      <span class="label" *ngIf="!isCollapsed">Προμηθευτές</span>
+    </a>
+  </div>
+
+  <!-- ΠΑΡΑΣΤΑΤΙΚΑ (folder) -->
+  <button
+    type="button"
+    class="group-header"
+    (click)="toggleSection('docs')"
+  >
+    <span class="icon">📄</span>
+    <span class="group-title" *ngIf="!isCollapsed">Παραστατικά</span>
+    <span
+      class="chevron"
+      *ngIf="!isCollapsed"
+      [class.open]="isDocsOpen"
+    >
+      ⌄
+    </span>
+  </button>
+
+  <div class="section" *ngIf="isDocsOpen">
+    <a
+      routerLink="/app/salesdocs"
+      routerLinkActive="active"
+      class="sidebar-link"
+    >
+      <span class="icon">🧾</span>
+      <span class="label" *ngIf="!isCollapsed">Πωλήσεις</span>
+    </a>
+    <a
+      routerLink="/app/purchases/docs"
+      routerLinkActive="active"
+      class="sidebar-link"
+    >
+      <span class="icon">🧾</span>
+      <span class="label" *ngIf="!isCollapsed">Αγορές</span>
+    </a>
+    <a
+      routerLink="/app/receipts"
+      routerLinkActive="active"
+      class="sidebar-link"
+    >
+      <span class="icon">💰</span>
+      <span class="label" *ngIf="!isCollapsed">Εισπράξεις</span>
+    </a>
+    <a
+      routerLink="/app/payments"
+      routerLinkActive="active"
+      class="sidebar-link"
+    >
+      <span class="icon">💳</span>
+      <span class="label" *ngIf="!isCollapsed">Πληρωμές</span>
+    </a>
+  </div>
+
+  <!-- ΠΑΡΑΜΕΤΡΟΠΟΙΗΣΗ (tenant settings folder) -->
+  <ng-container *ngIf="canManageCompanySettings$ | async">
+    <button
+      type="button"
+      class="group-header"
+      (click)="toggleSection('settings')"
+    >
+      <span class="icon">⚙️</span>
+      <span class="group-title" *ngIf="!isCollapsed">Παραμετροποίηση</span>
+      <span
+        class="chevron"
+        *ngIf="!isCollapsed"
+        [class.open]="isSettingsOpen"
+      >
+        ⌄
+      </span>
+    </button>
+
+    <div class="section" *ngIf="isSettingsOpen">
+      <a
+        routerLink="/app/settings/company"
+        routerLinkActive="active"
+        class="sidebar-link"
+      >
+        <span class="icon">🏢</span>
+        <span class="label" *ngIf="!isCollapsed">Εταιρεία</span>
+      </a>
+      <a
+        routerLink="/app/settings/branch"
+        routerLinkActive="active"
+        class="sidebar-link"
+      >
+        <span class="icon">🏬</span>
+        <span class="label" *ngIf="!isCollapsed">Υποκατάστημα</span>
+      </a>
+      <a
+        routerLink="/app/settings/whouse"
+        routerLinkActive="active"
+        class="sidebar-link"
+      >
+        <span class="icon">🏚️</span>
+        <span class="label" *ngIf="!isCollapsed">Α.Χ.</span>
+      </a>
+      <a
+        routerLink="/app/settings/document-types"
+        routerLinkActive="active"
+        class="sidebar-link"
+      >
+        <span class="icon">📑</span>
+        <span class="label" *ngIf="!isCollapsed">Τύποι Παραστατικών</span>
+      </a>
+      <a
+        routerLink="/app/settings/series"
+        routerLinkActive="active"
+        class="sidebar-link"
+      >
+        <span class="icon">🔢</span>
+        <span class="label" *ngIf="!isCollapsed">Σειρές Παραστατικών</span>
+      </a>
+      <a
+        routerLink="/app/settings/payments"
+        routerLinkActive="active"
+        class="sidebar-link"
+      >
+        <span class="icon">💱</span>
+        <span class="label" *ngIf="!isCollapsed">Τρόποι Πληρωμής</span>
+      </a>
+    </div>
+  </ng-container>
 </nav>

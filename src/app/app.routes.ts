@@ -144,6 +144,57 @@ export const routes: Routes = [
 
 
 
+     // --------- ΠΑΡΑΣΤΑΤΙΚΑ ΠΩΛΗΣΕΩΝ ---------
+    {
+      path: 'salesdocs',
+      loadComponent: () =>
+        import('./pages/salesdoc/salesdoc-list/salesdoc-list.component').then(
+          (m) => m.SalesdocListComponent
+        ),
+    },
+    {
+      path: 'salesdocs/new',
+      loadComponent: () =>
+        import('./pages/salesdoc/salesdoc-edit/salesdoc-edit.component').then(
+          (m) => m.SalesdocEditComponent
+        ),
+    },
+    {
+      path: 'salesdocs/:id',
+      loadComponent: () =>
+        import('./pages/salesdoc/salesdoc-edit/salesdoc-edit.component').then(
+          (m) => m.SalesdocEditComponent
+        ),
+    },
+
+
+
+    {
+  path: 'settings/company',
+  loadComponent: () =>
+    import('./pages/company/company-edit/company-edit.component').then(
+      (m) => m.CompanyEditComponent
+    ),
+},
+// --------- ΠΑΡΑΜΕΤΡΟΠΟΙΗΣΗ: ΥΠΟΚΑΤΑΣΤΗΜΑ / Α.Χ. ---------
+{
+  path: 'settings/branch',
+  loadComponent: () =>
+      import('./pages/branch/branch-list/branch-list.component').then(
+    
+      (m) => m.BranchListComponent
+    ),
+},
+
+{
+  path: 'settings/branch/:id',
+  loadComponent: () =>
+    import('./pages/branch/branch-edit/branch-edit.component').then(
+      (m) => m.BranchEditComponent
+    ),
+},
+ 
+
     { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
   ],
 },

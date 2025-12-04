@@ -9,7 +9,7 @@ export interface CustomerResponse {
   address?: string | null;
   city?: string | null;
   zip?: string | null;
-
+  email?: string | null;
   countryId?: number | null;
   countryName?: string | null;
 

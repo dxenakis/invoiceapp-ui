@@ -1,0 +1,129 @@
+<!-- src/app/pages/branch/branch-list/branch-list.component.html -->
+<section class="branches-page container-fluid py-3">
+  <!-- HEADER -->
+  <div class="mb-2">
+    <h2 class="h5 mb-0">Υποκαταστήματα</h2>
+  </div>
+
+  <!-- TOOLBAR -->
+  <app-crud-toolbar
+    [(searchTerm)]="searchTerm"
+    [searchPlaceholder]="'Αναζήτηση (κωδ./όνομα/πόλη)'"
+    [showNew]="true"
+    [showPrint]="true"
+    [showExport]="true"
+    (newClick)="newBranch()"
+    (printClick)="printBranches()"
+    (exportClick)="exportBranches()"
+  ></app-crud-toolbar>
+
+  <!-- MESSAGES -->
+  <div *ngIf="loading" class="alert alert-info mt-2">
+    Φόρτωση υποκαταστημάτων...
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger mt-2">
+    {{ error }}
+  </div>
+
+  <!-- TABLE -->
+  <div class="card mt-2" *ngIf="page && !loading">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 80px;">Κωδ.</th>
+              <th>Ονομασία</th>
+              <th>Πόλη</th>
+              <th style="width: 110px;">Τηλέφωνο</th>
+              <th style="width: 90px;">Κεντρικό</th>
+              <th style="width: 90px;">Ενεργό</th>
+              <th style="width: 120px;" class="text-end">Ενέργειες</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let b of page.content"
+              (click)="selectBranch(b)"
+              [class.table-active]="selectedBranch?.id === b.id"
+            >
+              <td>{{ b.code }}</td>
+              <td>{{ b.name }}</td>
+              <td>{{ b.city }}</td>
+              <td>{{ b.phone }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.bg-success]="b.headquarters"
+                  [class.bg-secondary]="!b.headquarters"
+                >
+                  {{ b.headquarters ? 'ΝΑΙ' : 'ΟΧΙ' }}
+                </span>
+              </td>
+              <td>
+                <span
+                  class="badge"
+                  [class.bg-success]="b.active"
+                  [class.bg-danger]="!b.active"
+                >
+                  {{ b.active ? 'ΕΝΕΡΓΟ' : 'INACTIVE' }}
+                </span>
+              </td>
+              <td class="text-end">
+                <button
+                  type="button"
+                  class="btn btn-link btn-sm"
+                  (click)="editBranch(b); $event.stopPropagation()"
+                >
+                  Επεξεργασία
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-link btn-sm text-danger"
+                  (click)="deleteBranch(b); $event.stopPropagation()"
+                >
+                  Διαγραφή
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="page.content.length === 0">
+              <td colspan="7" class="text-center py-3 text-muted">
+                Δεν βρέθηκαν υποκαταστήματα.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PAGINATION -->
+    <div
+      class="card-footer d-flex justify-content-between align-items-center py-2"
+      *ngIf="page.totalPages > 1"
+    >
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-sm rounded-pill"
+        [disabled]="page.number === 0"
+        (click)="loadPage(page.number - 1)"
+      >
+        ← Προηγούμενη
+      </button>
+
+      <span class="small text-muted">
+        Σελίδα {{ page.number + 1 }} από {{ page.totalPages }}
+      </span>
+
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-sm rounded-pill"
+        [disabled]="page.number + 1 >= page.totalPages"
+        (click)="loadPage(page.number + 1)"
+      >
+        Επόμενη →
+      </button>
+    </div>
+  </div>
+</section>
