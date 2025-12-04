@@ -48,6 +48,20 @@ export class BranchListComponent implements OnInit {
     });
   }
 
+    get filteredBranches(): BranchResponse[] {
+    if (!this.page) return [];
+    if (!this.searchTerm.trim()) return this.page.content;
+
+    const term = this.searchTerm.toLowerCase();
+    return this.page.content.filter((b) =>
+      (b.code && b.code.toLowerCase().includes(term)) ||
+      (b.name && b.name.toLowerCase().includes(term)) ||
+      (b.city && b.city.toLowerCase().includes(term)) ||
+      (b.phone && b.phone.toLowerCase().includes(term))
+    );
+  }
+
+
   newBranch(): void {
     this.router.navigate(['/app/settings/branch', 'new']);
   }

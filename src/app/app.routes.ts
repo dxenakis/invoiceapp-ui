@@ -194,6 +194,20 @@ export const routes: Routes = [
     ),
 },
  
+{
+  path: 'settings/whouse',
+  loadComponent: () =>
+    import('./pages/whouse/whouse-list/whouse-list.component').then(
+      (m) => m.WhouseListComponent
+    ),
+},
+{
+  path: 'settings/whouse/:id',
+  loadComponent: () =>
+    import('./pages/whouse/whouse-edit/whouse-edit.component').then(
+      (m) => m.WhouseEditComponent
+    ),
+},
 
     { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
   ],

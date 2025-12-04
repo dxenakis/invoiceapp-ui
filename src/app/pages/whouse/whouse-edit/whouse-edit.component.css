@@ -1,0 +1,18 @@
+/* src/app/pages/whouse/whouse-edit/whouse-edit.component.css */
+
+.whouse-edit-page {
+  background-color: #f5f7fb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+}
+
+.form-label-sm {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #4b5563;
+}
+
+.card-body {
+  padding: 1rem 1.25rem;
+}

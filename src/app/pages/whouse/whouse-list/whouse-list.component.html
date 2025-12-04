@@ -1,0 +1,90 @@
+<!-- src/app/pages/whouse/whouse-list/whouse-list.component.html -->
+<section class="whouses-page container-fluid py-3">
+  <!-- Τίτλος σελίδας -->
+  <div class="mb-2">
+    <h2 class="h5 mb-0">Αποθήκες</h2>
+  </div>
+
+  <!-- Γενικό toolbar (όπως στα υπόλοιπα) -->
+  <app-crud-toolbar
+    [(searchTerm)]="searchTerm"
+    [searchPlaceholder]="'Αναζήτηση (κωδ./όνομα/πόλη)'"
+    [showNew]="true"
+    [showPrint]="true"
+    [showExport]="true"
+    (newClick)="newWhouse()"
+    (printClick)="printWhouses()"
+    (exportClick)="exportWhouses()"
+  ></app-crud-toolbar>
+
+  <!-- Μηνύματα -->
+  <div *ngIf="loading" class="text-muted small mb-2">Φόρτωση…</div>
+  <div *ngIf="error" class="text-danger fw-semibold mb-2">
+    {{ error }}
+  </div>
+
+  <!-- Κάρτα με τον πίνακα -->
+  <div *ngIf="page" class="card shadow-sm border-0">
+    <div class="table-responsive">
+      <table class="table table-sm table-hover mb-0">
+        <thead>
+          <tr>
+            <th>Κωδικός</th>
+            <th>Ονομασία</th>
+            <th>Διεύθυνση</th>
+            <th>Πόλη</th>
+            <th>Κεντρική</th>
+            <th>Ενεργή</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let w of page.content"
+            (click)="selectWhouse(w)"
+            (dblclick)="editWhouse(w)"
+            [class.table-active]="w === selectedWhouse"
+          >
+            <td>{{ w.code }}</td>
+            <td>{{ w.name }}</td>
+            <td>{{ w.addressLine1 || '' }}</td>
+            <td>{{ w.city || '' }}</td>
+            <td>{{ w.headquarters ? '✔' : '✖' }}</td>
+            <td>{{ w.active ? '✔' : '✖' }}</td>
+          </tr>
+
+          <tr *ngIf="page.content.length === 0">
+            <td colspan="6" class="text-center py-3 text-muted">
+              Δεν βρέθηκαν αποθήκες.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex align-items-center gap-2 p-3 border-top">
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-sm rounded-pill"
+        [disabled]="page.number === 0"
+        (click)="loadPage(page.number - 1)"
+      >
+        ← Προηγούμενη
+      </button>
+
+      <span class="small text-muted">
+        Σελίδα {{ page.number + 1 }} από {{ page.totalPages }}
+      </span>
+
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-sm rounded-pill"
+        [disabled]="page.number + 1 >= page.totalPages"
+        (click)="loadPage(page.number + 1)"
+      >
+        Επόμενη →
+      </button>
+    </div>
+  </div>
+</section>

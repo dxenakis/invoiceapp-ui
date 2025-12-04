@@ -1,0 +1,21 @@
+/* src/app/pages/whouse/whouse-list/whouse-list.component.css */
+
+.whouses-page {
+  background-color: #f5f7fb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+}
+
+.table-sm td,
+.table-sm th {
+  vertical-align: middle;
+  font-size: 0.88rem;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #eef2ff;
+}
+
+.table-active {
+  background-color: #e0ebff !important;
+}
