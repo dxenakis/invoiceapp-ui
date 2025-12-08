@@ -225,6 +225,36 @@ export const routes: Routes = [
     ),
 },
 
+{
+  path: 'settings/payments',
+  loadComponent: () =>
+    import('./pages/payment/payment-list/payment-list.component').then(
+      (m) => m.PaymentListComponent
+    ),
+},
+{
+  path: 'settings/payments/:id',
+  loadComponent: () =>
+    import('./pages/payment/payment-edit/payment-edit.component').then(
+      (m) => m.PaymentEditComponent
+    ),
+},
+
+{
+  path: 'settings/series',
+  loadComponent: () =>
+    import('./pages/series/series-list/series-list.component').then(
+      (m) => m.SeriesListComponent
+    ),
+},
+{
+  path: 'settings/series/:id',
+  loadComponent: () =>
+    import('./pages/series/series-edit/series-edit.component').then(
+      (m) => m.SeriesEditComponent
+    ),
+},
+
 
     { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
   ],

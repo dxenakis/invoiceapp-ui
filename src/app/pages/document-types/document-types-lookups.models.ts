@@ -15,3 +15,15 @@ export interface IteprmsResponse {
   description: string;
   domain: number;
 }
+
+export interface Page<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+  // αν θες, πρόσθεσε και τα pageable/sort κλπ
+}

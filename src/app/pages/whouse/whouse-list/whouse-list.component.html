@@ -1,11 +1,11 @@
 <!-- src/app/pages/whouse/whouse-list/whouse-list.component.html -->
 <section class="whouses-page container-fluid py-3">
-  <!-- Τίτλος σελίδας -->
+  <!-- HEADER -->
   <div class="mb-2">
     <h2 class="h5 mb-0">Αποθήκες</h2>
   </div>
 
-  <!-- Γενικό toolbar (όπως στα υπόλοιπα) -->
+  <!-- GENERIC TOOLBAR (ίδιο με branch-list) -->
   <app-crud-toolbar
     [(searchTerm)]="searchTerm"
     [searchPlaceholder]="'Αναζήτηση (κωδ./όνομα/πόλη)'"
@@ -17,33 +17,31 @@
     (exportClick)="exportWhouses()"
   ></app-crud-toolbar>
 
-  <!-- Μηνύματα -->
+  <!-- MESSAGES -->
   <div *ngIf="loading" class="text-muted small mb-2">Φόρτωση…</div>
-  <div *ngIf="error" class="text-danger fw-semibold mb-2">
-    {{ error }}
-  </div>
+  <div *ngIf="error" class="text-danger fw-semibold mb-2">{{ error }}</div>
 
-  <!-- Κάρτα με τον πίνακα -->
-  <div *ngIf="page" class="card shadow-sm border-0">
+  <!-- TABLE CARD (όπως στο branch-list, αλλά με whouses-* κλάσεις) -->
+  <div *ngIf="page" class="card whouses-card shadow-sm border-0">
     <div class="table-responsive">
-      <table class="table table-sm table-hover mb-0">
+      <table class="table table-sm align-middle mb-0 whouses-table">
         <thead>
           <tr>
-            <th>Κωδικός</th>
-            <th>Ονομασία</th>
-            <th>Διεύθυνση</th>
-            <th>Πόλη</th>
-            <th>Κεντρική</th>
-            <th>Ενεργή</th>
+            <th><span class="x-column-header-text-inner">Κωδικός</span></th>
+            <th><span class="x-column-header-text-inner">Ονομασία</span></th>
+            <th><span class="x-column-header-text-inner">Διεύθυνση</span></th>
+            <th><span class="x-column-header-text-inner">Πόλη</span></th>
+            <th><span class="x-column-header-text-inner">Κεντρική</span></th>
+            <th><span class="x-column-header-text-inner">Ενεργή</span></th>
           </tr>
         </thead>
 
         <tbody>
           <tr
-            *ngFor="let w of page.content"
+            *ngFor="let w of filteredWhouses"
             (click)="selectWhouse(w)"
             (dblclick)="editWhouse(w)"
-            [class.table-active]="w === selectedWhouse"
+            [class.selected]="w === selectedWhouse"
           >
             <td>{{ w.code }}</td>
             <td>{{ w.name }}</td>
@@ -53,7 +51,7 @@
             <td>{{ w.active ? '✔' : '✖' }}</td>
           </tr>
 
-          <tr *ngIf="page.content.length === 0">
+          <tr *ngIf="filteredWhouses.length === 0">
             <td colspan="6" class="text-center py-3 text-muted">
               Δεν βρέθηκαν αποθήκες.
             </td>
@@ -62,7 +60,7 @@
       </table>
     </div>
 
-    <!-- Pagination -->
+    <!-- PAGINATION (ίδιο με branch-list) -->
     <div class="d-flex align-items-center gap-2 p-3 border-top">
       <button
         type="button"

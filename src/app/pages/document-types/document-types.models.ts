@@ -1,5 +1,5 @@
 // src/app/pages/document-types/document-types.models.ts
-
+import {  DocumentDomainOption, DOCUMENT_DOMAINS } from '../../core/models/domain.model'
 // Απόκριση backend
 export interface DocumentTypeResponse {
   id: number;
@@ -13,10 +13,10 @@ export interface DocumentTypeResponse {
 
   tprmsId?: number | null;
   tprmsCode?: string | null;
-
+  tprmsDescription?: string | null;
   iteprmsId?: number | null;
   iteprmsCode?: string | null;
-
+  iteprmsDescription?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
 }
@@ -39,15 +39,4 @@ export interface Page<T> {
   number: number;
 }
 
-export interface DocumentDomainOption {
-  code: number;
-  label: string;
-}
 
-// Βασικά domains (όπως στο enum DocumentDomain του backend)
-export const DOCUMENT_DOMAINS: DocumentDomainOption[] = [
-  { code: 1251, label: 'Αγορές' },
-  { code: 1351, label: 'Πωλήσεις' },
-  { code: 1381, label: 'Εισπράξεις' },
-  { code: 1281, label: 'Πληρωμές' },
-];

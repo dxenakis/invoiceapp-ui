@@ -1,0 +1,83 @@
+<!-- src/app/pages/payment/payment-edit/payment-edit.component.html -->
+<section class="payment-edit-page container-fluid py-3">
+  <div class="mb-2">
+    <h2 class="h5 mb-0">
+      Τρόπος Πληρωμής
+      <span *ngIf="paymentId">#{{ paymentId }}</span>
+      <span *ngIf="!paymentId">(Νέος)</span>
+    </h2>
+  </div>
+
+  <app-crud-form-toolbar
+    [saving]="saving"
+    [showDelete]="!!paymentId"
+    (saveClick)="save()"
+    (deleteClick)="delete()"
+    (cancelClick)="cancel()"
+  ></app-crud-form-toolbar>
+
+  <div *ngIf="loading" class="text-muted small mb-2">Φόρτωση…</div>
+  <div *ngIf="error" class="alert alert-danger py-2 mt-2">{{ error }}</div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form novalidate>
+        <div class="row g-3">
+          <div class="col-12 col-md-3">
+            <label class="form-label form-label-sm">Κωδικός</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.code"
+              name="code"
+              maxlength="20"
+            />
+          </div>
+
+          <div class="col-12 col-md-5">
+            <label class="form-label form-label-sm">Περιγραφή</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.description"
+              name="description"
+            />
+          </div>
+
+          <div class="col-12 col-md-4">
+            <label class="form-label form-label-sm">Τρόπος MyDATA</label>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="model.mydataMethodCode"
+              name="mydataMethodCode"
+            >
+              <option [ngValue]="null">-- Χωρίς αντιστοίχιση --</option>
+              <option
+                *ngFor="let opt of mydataOptions"
+                [ngValue]="opt.code"
+              >
+                {{ opt.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-12 col-md-3">
+            <label class="form-label form-label-sm d-block">Κατάσταση</label>
+            <div class="form-check">
+              <input
+                id="active"
+                class="form-check-input"
+                type="checkbox"
+                [(ngModel)]="model.active"
+                name="active"
+              />
+              <label class="form-check-label" for="active">
+                Ενεργό
+              </label>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

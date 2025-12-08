@@ -1,0 +1,103 @@
+<!-- src/app/pages/series/series-list/series-list.component.html -->
+<section class="series-page container-fluid py-3">
+  <!-- HEADER -->
+  <div class="mb-2">
+    <h2 class="h5 mb-0">Σειρές Παραστατικών</h2>
+  </div>
+
+  <!-- TOOLBAR -->
+  <app-crud-toolbar
+    [(searchTerm)]="searchTerm"
+    [searchPlaceholder]="'Αναζήτηση (κωδ./περιγραφή/τύπος/υποκ./αποθήκη)'"
+    [showNew]="true"
+    [showPrint]="true"
+    [showExport]="true"
+    (newClick)="newSeries()"
+    (printClick)="printSeries()"
+    (exportClick)="exportSeries()"
+  ></app-crud-toolbar>
+
+  <!-- MESSAGES -->
+  <div *ngIf="loading" class="text-muted small mb-2">Φόρτωση…</div>
+  <div *ngIf="error" class="text-danger fw-semibold mb-2">{{ error }}</div>
+
+  <!-- TABLE CARD -->
+  <div *ngIf="page" class="card series-card shadow-sm border-0">
+    <div class="table-responsive">
+      <table class="table table-sm align-middle mb-0 series-table">
+        <thead>
+          <tr>
+            <th><span class="x-column-header-text-inner">Κωδικός</span></th>
+            <th><span class="x-column-header-text-inner">Περιγραφή</span></th>
+            <th><span class="x-column-header-text-inner">Τύπος Παραστ.</span></th>
+            <th><span class="x-column-header-text-inner">Υποκατάστημα</span></th>
+            <th><span class="x-column-header-text-inner">Αποθήκη</span></th>
+            <th><span class="x-column-header-text-inner">Ενεργή</span></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let s of filteredSeries"
+            (click)="selectSeries(s)"
+            (dblclick)="editSeries(s)"
+            [class.selected]="s === selectedSeries"
+          >
+            <td>{{ s.code }}</td>
+            <td>{{ s.description }}</td>
+            <td>
+              <ng-container *ngIf="s.documentType; else noDocType">
+                {{ s.documentType.code }} - {{ s.documentType.description }}
+              </ng-container>
+              <ng-template #noDocType>—</ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="s.branch; else noBranch">
+                {{ s.branch.code }} - {{ s.branch.name }}
+              </ng-container>
+              <ng-template #noBranch>—</ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="s.whouse; else noWhouse">
+                {{ s.whouse.code }} - {{ s.whouse.name }}
+              </ng-container>
+              <ng-template #noWhouse>—</ng-template>
+            </td>
+            <td>{{ s.active ? '✔' : '✖' }}</td>
+          </tr>
+
+          <tr *ngIf="filteredSeries.length === 0">
+            <td colspan="6" class="text-center py-3 text-muted">
+              Δεν βρέθηκαν σειρές.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="d-flex align-items-center gap-2 p-3 border-top">
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-sm rounded-pill"
+        [disabled]="page.number === 0"
+        (click)="loadPage(page.number - 1)"
+      >
+        ← Προηγούμενη
+      </button>
+
+      <span class="small text-muted">
+        Σελίδα {{ page.number + 1 }} από {{ page.totalPages }}
+      </span>
+
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-sm rounded-pill"
+        [disabled]="page.number + 1 >= page.totalPages"
+        (click)="loadPage(page.number + 1)"
+      >
+        Επόμενη →
+      </button>
+    </div>
+  </div>
+</section>

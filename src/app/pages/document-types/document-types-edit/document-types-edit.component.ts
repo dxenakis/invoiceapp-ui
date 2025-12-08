@@ -4,18 +4,13 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
-
+import {  DocumentDomainOption, DOCUMENT_DOMAINS } from '../../../core/models/domain.model'
 import { CrudFormToolbarComponent } from '../../../layout/crud-form-toolbar/crud-form-toolbar.component';
 import {
   DocumentTypeRequest,
-  DocumentTypeResponse,
-  DOCUMENT_DOMAINS,
-  DocumentDomainOption,
+  DocumentTypeResponse,  
 } from '../document-types.models';
-import {
-  TprmsResponse,
-  IteprmsResponse,
-} from '../document-types-lookups.models';
+import {  TprmsResponse,  IteprmsResponse,} from '../document-types-lookups.models';
 import { DocumentTypesService } from '../document-types.service';
 import { DocumentTypesLookupsService } from '../document-types-lookups.service';
 
@@ -100,6 +95,7 @@ export class DocumentTypesEditComponent implements OnInit {
    */
   onDomainChange(domain: number | null, keepSelected = false): void {
     if (!domain) {
+      
       this.tprmsOptions = [];
       this.iteprmsOptions = [];
       if (!keepSelected) {
@@ -146,7 +142,7 @@ export class DocumentTypesEditComponent implements OnInit {
       error: (err) => {
         console.error('Error loading lookups for domain', domain, err);
         this.error =
-          'Αποτυχία φόρτωσης σειρών παραστατικών / παραμέτρων αποθήκης.';
+          'Αποτυχία φόρτωσης κινήσεων συναλλασομένου / αποθήκης.';
         this.loading = false;
         this.tprmsOptions = [];
         this.iteprmsOptions = [];

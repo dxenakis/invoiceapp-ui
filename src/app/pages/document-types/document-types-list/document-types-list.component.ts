@@ -3,12 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { getDomainLabel} from '../../../core/models/domain.model'
 import { CrudToolbarComponent } from '../../../layout/crud-toolbar/crud-toolbar.component';
-import {
-  DocumentTypeResponse,
-  Page,
-} from '../document-types.models';
+import { DocumentTypeResponse,  Page,} from '../document-types.models';
 import { DocumentTypesService } from '../document-types.service';
 
 @Component({
@@ -34,6 +31,8 @@ export class DocumentTypesListComponent implements OnInit {
   ngOnInit(): void {
     this.loadPage(0);
   }
+
+
 
   loadPage(pageNumber: number): void {
     this.loading = true;
@@ -82,4 +81,11 @@ export class DocumentTypesListComponent implements OnInit {
   exportDocumentTypes(): void {
     console.log('Export document types');
   }
+  
+ resolveDomain(domain: number){
+
+    return getDomainLabel(domain);
+
+ }
+
 }

@@ -1,0 +1,92 @@
+<!-- src/app/pages/payment/payment-list/payment-list.component.html -->
+<section class="payments-page container-fluid py-3">
+  <!-- HEADER -->
+  <div class="mb-2">
+    <h2 class="h5 mb-0">Τρόποι Πληρωμής</h2>
+  </div>
+
+  <!-- TOOLBAR (ίδιο pattern με branch/whouse) -->
+  <app-crud-toolbar
+    [(searchTerm)]="searchTerm"
+    [searchPlaceholder]="'Αναζήτηση (κωδ./περιγραφή/τύπος)'"
+    [showNew]="true"
+    [showPrint]="true"
+    [showExport]="true"
+    (newClick)="newPayment()"
+    (printClick)="printPayments()"
+    (exportClick)="exportPayments()"
+  ></app-crud-toolbar>
+
+  <!-- messages -->
+  <div *ngIf="loading" class="text-muted small mb-2">Φόρτωση…</div>
+  <div *ngIf="error" class="text-danger fw-semibold mb-2">{{ error }}</div>
+
+  <!-- TABLE CARD -->
+  <div *ngIf="page" class="card payments-card shadow-sm border-0">
+    <div class="table-responsive">
+      <table class="table table-sm align-middle mb-0 payments-table">
+        <thead>
+          <tr>
+            <th>
+              <span class="x-column-header-text-inner">Κωδικός</span>
+            </th>
+            <th>
+              <span class="x-column-header-text-inner">Περιγραφή</span>
+            </th>
+            <th>
+              <span class="x-column-header-text-inner">Τρόπος MyDATA</span>
+            </th>
+            <th>
+              <span class="x-column-header-text-inner">Ενεργό</span>
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let p of filteredPayments"
+            (click)="selectPayment(p)"
+            (dblclick)="editPayment(p)"
+            [class.selected]="p === selectedPayment"
+          >
+            <td>{{ p.code }}</td>
+            <td>{{ p.description }}</td>
+            <td>{{ mydataLabel(p.mydataMethodCode) }}</td>
+            <td>{{ p.active ? '✔' : '✖' }}</td>
+          </tr>
+
+          <tr *ngIf="filteredPayments.length === 0">
+            <td colspan="4" class="text-center py-3 text-muted">
+              Δεν βρέθηκαν τρόποι πληρωμής.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="d-flex align-items-center gap-2 p-3 border-top">
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-sm rounded-pill"
+        [disabled]="page.number === 0"
+        (click)="loadPage(page.number - 1)"
+      >
+        ← Προηγούμενη
+      </button>
+
+      <span class="small text-muted">
+        Σελίδα {{ page.number + 1 }} από {{ page.totalPages }}
+      </span>
+
+      <button
+        type="button"
+        class="btn btn-outline-secondary btn-sm rounded-pill"
+        [disabled]="page.number + 1 >= page.totalPages"
+        (click)="loadPage(page.number + 1)"
+      >
+        Επόμενη →
+      </button>
+    </div>
+  </div>
+</section>

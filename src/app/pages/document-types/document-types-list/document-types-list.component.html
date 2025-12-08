@@ -27,8 +27,8 @@
             <th><span class="x-column-header-text-inner">Κωδικός</span></th>
             <th><span class="x-column-header-text-inner">Περιγραφή</span></th>
             <th><span class="x-column-header-text-inner">Domain</span></th>
-            <th><span class="x-column-header-text-inner">Σειρά (TPRMS)</span></th>
-            <th><span class="x-column-header-text-inner">Par. Αποθήκης (ITEPRMS)</span></th>
+            <th><span class="x-column-header-text-inner">κίνηση Πελάτη</span></th>
+            <th><span class="x-column-header-text-inner">Κίνηση Αποθήκης</span></th>
           </tr>
         </thead>
         <tbody>
@@ -40,16 +40,16 @@
           >
             <td>{{ d.code }}</td>
             <td>{{ d.description }}</td>
-            <td>{{ d.domain }}</td>
+            <td>{{ resolveDomain(d.domain) }}</td>
             <td>
               <ng-container *ngIf="d.tprmsCode || d.tprmsId; else noTprms">
-                {{ d.tprmsCode || ('#' + d.tprmsId) }}
+                {{ d.tprmsDescription || ('#' + d.tprmsId) }}
               </ng-container>
               <ng-template #noTprms>-</ng-template>
             </td>
             <td>
               <ng-container *ngIf="d.iteprmsCode || d.iteprmsId; else noIte">
-                {{ d.iteprmsCode || ('#' + d.iteprmsId) }}
+                {{ d.iteprmsDescription || ('#' + d.iteprmsId) }}
               </ng-container>
               <ng-template #noIte>-</ng-template>
             </td>

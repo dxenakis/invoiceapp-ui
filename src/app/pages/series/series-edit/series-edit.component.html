@@ -1,0 +1,160 @@
+<!-- src/app/pages/series/series-edit/series-edit.component.html -->
+<section class="series-edit-page container-fluid py-3">
+  <div class="mb-2">
+    <h2 class="h5 mb-0">
+      Σειρά Παραστατικού
+      <span *ngIf="seriesId">#{{ seriesId }}</span>
+      <span *ngIf="!seriesId">(Νέα)</span>
+    </h2>
+  </div>
+
+  <app-crud-form-toolbar
+    [saving]="saving"
+    [showDelete]="!!seriesId"
+    (saveClick)="save()"
+    (deleteClick)="delete()"
+    (cancelClick)="cancel()"
+  ></app-crud-form-toolbar>
+
+  <div *ngIf="loading" class="text-muted small mb-2">Φόρτωση…</div>
+  <div *ngIf="error" class="alert alert-danger py-2 mt-2">{{ error }}</div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form novalidate>
+        <div class="row g-3">
+          <!-- Κωδικός -->
+          <div class="col-12 col-md-3">
+            <label class="form-label form-label-sm">Κωδικός *</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.code"
+              name="code"
+              maxlength="30"
+            />
+          </div>
+
+          <!-- Περιγραφή -->
+          <div class="col-12 col-md-5">
+            <label class="form-label form-label-sm">Περιγραφή</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.description"
+              name="description"
+            />
+          </div>
+
+          <!-- Ενεργή -->
+          <div class="col-12 col-md-2 d-flex align-items-end">
+            <div class="form-check mt-3">
+              <input
+                class="form-check-input"
+                id="activeCheck"
+                type="checkbox"
+                [(ngModel)]="model.active"
+                name="active"
+              />
+              <label class="form-check-label" for="activeCheck">
+                Ενεργή
+              </label>
+            </div>
+          </div>
+
+          <!-- Τύπος παραστατικού -->
+          <div class="col-12 col-md-6">
+            <label class="form-label form-label-sm">Τύπος Παραστατικού *</label>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="model.documentTypeId"
+              name="documentTypeId"
+            >
+              <option [ngValue]="null">-- Επιλογή τύπου --</option>
+              <option
+                *ngFor="let d of documentTypes"
+                [ngValue]="d.id"
+              >
+                {{ d.code }} - {{ d.description }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Υποκατάστημα -->
+          <div class="col-12 col-md-6">
+            <label class="form-label form-label-sm">Υποκατάστημα</label>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="model.branchId"
+              name="branchId"
+              (ngModelChange)="onBranchChange($event)"
+            >
+              <option [ngValue]="null">-- Χωρίς υποκατάστημα --</option>
+              <option
+                *ngFor="let b of branches"
+                [ngValue]="b.id"
+              >
+                {{ b.code }} - {{ b.name }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Αποθήκη -->
+          <div class="col-12 col-md-6">
+            <label class="form-label form-label-sm">Αποθήκη</label>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="model.whouseId"
+              name="whouseId"
+            >
+              <option [ngValue]="null">-- Χωρίς αποθήκη --</option>
+              <option
+                *ngFor="let w of whouses"
+                [ngValue]="w.id"
+              >
+                {{ w.code }} - {{ w.name }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Prefix -->
+          <div class="col-12 col-md-3">
+            <label class="form-label form-label-sm">Prefix</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.prefix"
+              name="prefix"
+              maxlength="30"
+            />
+          </div>
+
+          <!-- Pattern -->
+          <div class="col-12 col-md-5">
+            <label class="form-label form-label-sm">Pattern αριθμού</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.formatPattern"
+              name="formatPattern"
+              placeholder="{YYYY}/{SERIES}-{NNNN}"
+            />
+          </div>
+
+          <!-- Padding length -->
+          <div class="col-12 col-md-2">
+            <label class="form-label form-label-sm">Μήκος padding</label>
+            <input
+              type="number"
+              class="form-control form-control-sm"
+              [(ngModel)]="model.paddingLength"
+              name="paddingLength"
+              min="1"
+              max="10"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

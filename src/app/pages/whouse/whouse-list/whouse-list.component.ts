@@ -47,6 +47,21 @@ export class WhouseListComponent implements OnInit {
     });
   }
 
+  /** Όπως το filteredBranches στο branch-list, αλλά για αποθήκες */
+  get filteredWhouses(): WhouseResponse[] {
+    if (!this.page) return [];
+    if (!this.searchTerm.trim()) return this.page.content;
+
+    const term = this.searchTerm.toLowerCase();
+    return this.page.content.filter(
+      (w) =>
+        (w.code && w.code.toLowerCase().includes(term)) ||
+        (w.name && w.name.toLowerCase().includes(term)) ||
+        (w.city && w.city.toLowerCase().includes(term)) ||
+        (w.addressLine1 && w.addressLine1.toLowerCase().includes(term))
+    );
+  }
+
   newWhouse(): void {
     this.router.navigate(['/app/settings/whouse', 'new']);
   }
@@ -74,6 +89,7 @@ export class WhouseListComponent implements OnInit {
     this.selectedWhouse = w;
   }
 
+  // για μελλοντική χρήση
   printWhouses(): void {
     console.log('Print whouses');
   }
