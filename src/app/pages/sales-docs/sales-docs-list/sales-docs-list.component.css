@@ -1,0 +1,36 @@
+.sales-docs-page {
+  background-color: #f5f7fb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+}
+
+.sales-docs-card {
+  border-radius: 8px;
+}
+
+.sales-docs-table thead {
+  background-color: #eef1f7;
+}
+
+.sales-docs-table thead th {
+  border-bottom: 1px solid #dee2e6;
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+}
+
+.sales-docs-table tbody tr {
+  cursor: pointer;
+}
+
+.sales-docs-table tbody tr:hover {
+  background-color: #e6ecf9 !important;
+}
+
+.sales-docs-table tbody tr.selected {
+  background-color: #d7e3ff !important;
+}
+
+.sales-docs-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}

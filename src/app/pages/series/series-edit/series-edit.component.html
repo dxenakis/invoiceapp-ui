@@ -117,6 +117,23 @@
             </select>
           </div>
 
+          <!-- DOMAIN -->
+        <div class="col-md-4">
+          <label class="form-label form-label-sm">Domain *</label>
+          <select
+            class="form-select form-select-sm"
+            [(ngModel)]="model.domain"
+            name="domain"
+            
+          >
+            <option [ngValue]="null">-- Επιλογή --</option>
+            <option *ngFor="let d of domains" [ngValue]="d.code">
+              {{ d.code }} - {{ d.label }}
+            </option>
+          </select>
+        </div>
+
+
           <!-- Prefix -->
           <div class="col-12 col-md-3">
             <label class="form-label form-label-sm">Prefix</label>

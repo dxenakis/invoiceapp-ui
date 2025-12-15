@@ -20,7 +20,7 @@ import {
   styleUrls: ['./salesdoc-list.component.css'],
   imports: [CommonModule, FormsModule, RouterModule, CrudToolbarComponent],
 })
-export class SalesdocListComponent implements OnInit {
+export class SalesdocListComponent1 implements OnInit {
   page?: Page<FindocResponse>;
   loading = false;
   error?: string;

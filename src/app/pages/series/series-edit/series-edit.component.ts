@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import {  DocumentDomainOption, DOCUMENT_DOMAINS } from '../../../core/models/domain.model'
 import { CrudFormToolbarComponent } from '../../../layout/crud-form-toolbar/crud-form-toolbar.component';
 
 import { SeriesRequest, SeriesResponse, Page } from '../series.models';
@@ -34,6 +34,7 @@ export class SeriesEditComponent implements OnInit {
     documentTypeId: null,
     branchId: null,
     whouseId: null,
+    domain:null,
     code: '',
     description: '',
     active: true,
@@ -42,6 +43,7 @@ export class SeriesEditComponent implements OnInit {
     paddingLength: 4,
   };
 
+  domains: DocumentDomainOption[] = DOCUMENT_DOMAINS;
   loading = false;
   saving = false;
   error: string | null = null;
@@ -49,6 +51,7 @@ export class SeriesEditComponent implements OnInit {
   branches: BranchResponse[] = [];
   whouses: WhouseResponse[] = [];
   documentTypes: DocumentTypeResponse[] = [];
+
 
   constructor(
     private route: ActivatedRoute,
@@ -125,6 +128,7 @@ export class SeriesEditComponent implements OnInit {
           documentTypeId: res.documentType?.id ?? null,
           branchId: res.branch?.id ?? null,
           whouseId: res.whouse?.id ?? null,
+          domain: res.domain ?? null,
           code: res.code,
           description: res.description ?? '',
           active: res.active,

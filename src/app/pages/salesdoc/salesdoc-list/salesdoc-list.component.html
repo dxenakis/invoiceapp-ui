@@ -36,13 +36,24 @@
       <table class="table table-sm align-middle mb-0 salesdoc-table">
         <thead>
           <tr>
-            <th>Αριθμός</th>
-            <th>Ημερομηνία</th>
-            <th>Σειρά</th>
-            <th>Πελάτης</th>
-            <th>Κατάσταση</th>
+            <th>
+              <span class="x-column-header-text-inner">Αριθμός</span>
+            </th>
+            <th>
+              <span class="x-column-header-text-inner">Ημερομηνία</span>
+            </th>
+            <th>
+              <span class="x-column-header-text-inner">Σειρά</span>
+            </th>
+            <th>
+              <span class="x-column-header-text-inner">Πελάτης</span>
+            </th>
+            <th>
+              <span class="x-column-header-text-inner">Κατάσταση</span>
+            </th>
           </tr>
         </thead>
+
         <tbody>
           <tr
             *ngFor="let doc of filteredDocs"
@@ -82,15 +93,16 @@
       </table>
     </div>
 
+    <!-- Pagination footer -->
     <div
-      class="card-footer d-flex align-items-center justify-content-between py-2"
+      *ngIf="page"
+      class="d-flex align-items-center justify-content-between px-3 py-2 border-top"
     >
       <div class="small text-muted">
-        Σελίδα {{ page.number + 1 }} από {{ page.totalPages }} – Σύνολο:
-        {{ page.totalElements }}
+        Σελίδα {{ page.number + 1 }} από {{ page.totalPages }}
       </div>
 
-      <div class="btn-group btn-group-sm">
+      <div class="d-flex align-items-center gap-1">
         <button
           class="btn btn-outline-secondary"
           [disabled]="page.number === 0"

@@ -17,6 +17,7 @@ export interface SeriesResponse {
 
   code: string;
   description?: string | null;
+  domain: number | null;
   active: boolean;
   prefix?: string | null;
   formatPattern?: string | null;
@@ -51,7 +52,7 @@ export interface SeriesRequest {
   documentTypeId: number | null;
   branchId?: number | null;
   whouseId?: number | null;
-
+  domain: number | null;
   code: string;
   description?: string | null;
   active?: boolean | null;

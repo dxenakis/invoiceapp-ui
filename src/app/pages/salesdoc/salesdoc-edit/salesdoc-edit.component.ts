@@ -39,7 +39,7 @@ type ActiveTab = 'document' | 'delivery';
   styleUrls: ['./salesdoc-edit.component.css'],
   imports: [CommonModule, FormsModule, RouterModule, CrudFormToolbarComponent],
 })
-export class SalesdocEditComponent implements OnInit {
+export class SalesdocEditComponent1 implements OnInit {
   activeTab: ActiveTab = 'document';
 
   // View model

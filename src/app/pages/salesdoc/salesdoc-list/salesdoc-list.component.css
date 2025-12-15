@@ -1,26 +1,73 @@
+/* ------------------- PAGE BACKGROUND ------------------- */
+
 .salesdoc-page {
   background-color: #f5f7fb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
 }
+
+/* ------------------- CARD ------------------- */
 
 .salesdoc-card {
   border-radius: 8px;
 }
 
+/* ------------------- TABLE HEADER (όπως items-table) ------------------- */
+
 .salesdoc-table thead th {
-  background-color: #f9fafb;
-  font-size: 0.75rem;
+  background: linear-gradient(to bottom, #f3f5f9, #e3e7ef) !important;
+  border-bottom: 2px solid #c8cdd8 !important;
+  padding: 10px 18px !important;
+}
+
+.x-column-header-text-inner {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #6b7280;
+  letter-spacing: 0.03em;
+  color: #3b4353;
 }
 
-.salesdoc-table tbody td {
-  font-size: 0.85rem;
+.salesdoc-table thead {
+  box-shadow: inset 0 -1px 0 #c8cdd8;
 }
 
-.salesdoc-table tr.table-active {
-  background-color: #e5f2ff;
+/* ------------------- TABLE BODY ------------------- */
+
+.salesdoc-table td {
+  padding: 9px 18px !important;
+  border-bottom: 1px solid #e3e6ee;
+  font-size: 0.9rem;
 }
+
+/* Zebra rows */
+.salesdoc-table tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.salesdoc-table tbody tr:nth-child(even) {
+  background-color: #f7f8fb;
+}
+
+/* Hover effect */
+.salesdoc-table tbody tr:hover {
+  background-color: #e6ecf9 !important;
+  cursor: pointer;
+}
+
+/* Selected row (table-active από το [class.table-active]) */
+.salesdoc-table tbody tr.table-active {
+  background-color: #d7e3ff !important;
+}
+
+/* Avoid sticking rows to borders */
+.salesdoc-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* ------------------- FILTER LABEL ------------------- */
 
 .form-label-sm {
   font-size: 0.8rem;

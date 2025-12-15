@@ -1,0 +1,60 @@
+/* Φόντο + font, όπως στα άλλα κυκλώματα */
+.sales-doc-edit-page {
+  background-color: #f5f7fb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+/* Κάρτα */
+.sales-doc-edit-card {
+  border-radius: 8px;
+}
+
+/* Padding μέσα στην κάρτα (σαν customers) */
+.sales-doc-form {
+  padding: 1rem 1.25rem;
+}
+
+/* Labels ERP-like (uppercase όπως customer) */
+.sales-doc-form .form-label-sm {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #4b5563;
+  margin-bottom: 0.15rem;
+}
+
+/* Inputs πιο “άνετα” */
+.sales-doc-form .form-control-sm,
+.sales-doc-form .form-select-sm {
+  font-size: 0.9rem;
+}
+
+/* Tabs */
+.sales-tabs {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* button tabs - σταθερό κείμενο */
+.sales-tab {
+  border: 1px solid #cfd6e4;
+  background: #ffffff;
+  color: #374151;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sales-tab:hover {
+  background: #eef1f7;
+}
+
+.sales-tab.active {
+  background: #d7e3ff;
+  border-color: #9bb7ff;
+  color: #1f2937;
+}

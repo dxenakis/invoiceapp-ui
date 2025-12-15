@@ -141,9 +141,29 @@ export const routes: Routes = [
           (m) => m.SuppliersEditComponent
         ),
     },
+{
+  path: 'sales-docs',
+  loadComponent: () =>
+    import('./pages/sales-docs/sales-docs-list/sales-docs-list.component').then(
+      (m) => m.SalesDocsListComponent
+    ),
+},
+{
+  path: 'sales-docs/new',
+  loadComponent: () =>
+    import('./pages/sales-docs/sales-docs-edit/sales-docs-edit.component').then(
+      (m) => m.SalesDocsEditComponent
+    ),
+},
+{
+  path: 'sales-docs/:id',
+  loadComponent: () =>
+    import('./pages/sales-docs/sales-docs-edit/sales-docs-edit.component').then(
+      (m) => m.SalesDocsEditComponent
+    ),
+},
 
-
-
+/*
      // --------- ΠΑΡΑΣΤΑΤΙΚΑ ΠΩΛΗΣΕΩΝ ---------
     {
       path: 'salesdocs',
@@ -167,7 +187,7 @@ export const routes: Routes = [
         ),
     },
 
-
+*/
 
     {
   path: 'settings/company',

@@ -1,0 +1,106 @@
+<section class="sales-docs-page container-fluid py-3">
+  <!-- Τίτλος -->
+  <div class="mb-2">
+    <h2 class="h5 mb-0">Παραστατικά Πωλήσεων</h2>
+  </div>
+
+  <!-- Toolbar -->
+  <app-crud-toolbar
+    [(searchTerm)]="searchTerm"
+    [searchPlaceholder]="'Αναζήτηση (αριθμός / πελάτης / κλπ)'"
+    [showNew]="true"
+    [showPrint]="true"
+    [showExport]="true"
+    (newClick)="newDoc()"
+    (printClick)="printDocs()"
+    (exportClick)="exportDocs()"
+    (refreshClick)="refresh()"
+  ></app-crud-toolbar>
+
+  <!-- Πίνακας -->
+  <div class="card sales-docs-card shadow-sm mt-2">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0 sales-docs-table">
+          <thead>
+            <tr>
+              <th class="text-secondary small fw-semibold">#</th>
+              <th class="text-secondary small fw-semibold">Ημερομηνία</th>
+              <th class="text-secondary small fw-semibold">Τύπος</th>
+              <th class="text-secondary small fw-semibold">Σειρά</th>
+              <th class="text-secondary small fw-semibold">Υποκ/μα</th>
+              <th class="text-secondary small fw-semibold">Domain</th>
+              <th class="text-secondary small fw-semibold">Πελάτης (id)</th>
+              <th class="text-secondary small fw-semibold">Πληρωμή</th>
+              <th class="text-secondary small fw-semibold text-end">
+                Σύνολο
+              </th>
+            </tr>
+          </thead>
+          <tbody *ngIf="page?.content?.length; else emptyState">
+            <tr
+              *ngFor="let doc of page!.content"
+              (click)="openDoc(doc)"
+              [class.selected]="doc.id === selectedId"
+            >
+              <td>{{ doc.printedNumber || doc.number }}</td>
+              <td>{{ doc.documentDate }}</td>
+              <td>{{ docTypeLabel(doc.documentTypeId) }}</td>
+              <td>{{ seriesLabel(doc.seriesId) }}</td>
+              <td>{{ branchLabel(doc.branchId) }}</td>
+              <td>{{ domainLabel(doc.documentDomain) }}</td>
+              <td>{{ doc.traderId }}</td>
+              <td>{{ paymentLabel(doc.paymentMethodId) }}</td>
+              <td class="text-end">
+                {{ doc.totalGross | number : '1.2-2' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty state -->
+      <ng-template #emptyState>
+        <div class="p-3 text-muted small">
+          Δεν βρέθηκαν παραστατικά.
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Pagination -->
+    <div
+      class="card-footer d-flex justify-content-between align-items-center py-2"
+      *ngIf="page"
+    >
+      <div class="small text-muted">
+        Εμφάνιση {{ page.number * page.size + 1 }} –
+        {{ page.number * page.size + page.content.length }} από
+        {{ page.totalElements }}
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm rounded-pill"
+          [disabled]="page.number === 0"
+          (click)="loadPage(page.number - 1)"
+        >
+          ← Προηγούμενη
+        </button>
+
+        <span class="small text-muted">
+          Σελίδα {{ page.number + 1 }} από {{ page.totalPages }}
+        </span>
+
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm rounded-pill"
+          [disabled]="page.number + 1 >= page.totalPages"
+          (click)="loadPage(page.number + 1)"
+        >
+          Επόμενη →
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
