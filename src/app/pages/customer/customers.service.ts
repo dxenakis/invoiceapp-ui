@@ -1,7 +1,7 @@
 // src/app/pages/customer/customers.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map  } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { CustomerRequest, CustomerResponse, Page } from './customer.models';
 
@@ -11,11 +11,18 @@ export class CustomersService {
 
   constructor(private http: HttpClient) {}
 
-  list(page = 0, size = 20): Observable<Page<CustomerResponse>> {
+  list(page = 0, size = 20, search?: string): Observable<Page<CustomerResponse>> {
     let params = new HttpParams().set('page', page).set('size', size);
     // Αν θελήσεις server-side search, μπορείς να κάνεις:
-    // if (search) { params = params.set('search', search); }
+    if (search && search.trim().length > 0) {
+      params = params.set('search', search.trim()); // ✅ backend το υποστηρίζει
+    }
     return this.http.get<Page<CustomerResponse>>(this.baseUrl, { params });
+  }
+
+  /** Για typeahead/autocomplete */
+  searchLookup(term: string, limit = 20): Observable<CustomerResponse[]> {
+    return this.list(0, limit, term).pipe(map((p) => p.content ?? []));
   }
 
   get(id: number): Observable<CustomerResponse> {

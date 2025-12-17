@@ -1,9 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { Subject, Subscription, of } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { CrudFormToolbarComponent } from '../../../layout/crud-form-toolbar/crud-form-toolbar.component';
+import { CustomersService } from '../../customer/customers.service';
+import { CustomerResponse } from '../../customer/customer.models';
+
 
 import {
   FindocResponse,
@@ -23,6 +27,8 @@ import {
   DocumentTypeLookup,
 } from '../sales-docs-lookups.service';
 
+
+
 type ActiveTab = 'doc' | 'delivery';
 
 @Component({
@@ -32,31 +38,30 @@ type ActiveTab = 'doc' | 'delivery';
   templateUrl: './sales-docs-edit.component.html',
   styleUrls: ['./sales-docs-edit.component.css'],
 })
-export class SalesDocsEditComponent implements OnInit {
+export class SalesDocsEditComponent implements OnInit, OnDestroy {
   docId: number | null = null;
   saving = false;
   loading = false;
 
   activeTab: ActiveTab = 'doc';
 
+
+
   // Header (UI fields)
   header = {
-    // 1η γραμμή
     documentDate: new Date().toISOString().slice(0, 10),
     branchId: null as number | null,
-    ax: '' as string, // Α.Χ (προς το παρόν UI)
+    ax: '' as string,
 
-    // 2η γραμμή
     seriesId: null as number | null,
     documentTypeId: null as number | null,
-    docNo: '' as string, // "Παραστατικό" (θα το φτιάξεις backend)
+    docNo: '' as string,
 
-    // 3η/4η γραμμή
     paymentMethodId: null as number | null,
     shipKindId: null as number | null,
     traderId: null as number | null,
 
-    documentDomain: 1351, // π.χ. SALES
+    documentDomain: 1351,
   };
 
   // Mtrdoc (delivery)
@@ -74,7 +79,7 @@ export class SalesDocsEditComponent implements OnInit {
   // Lines
   lines: MtrLineRequest[] = [];
 
-  // Lookups (αυτά που δείχνουμε στο UI = filtered)
+  // Lookups (filtered)
   branches: BranchLookup[] = [];
   series: SeriesLookup[] = [];
   payments: PaymentMethodLookup[] = [];
@@ -82,31 +87,47 @@ export class SalesDocsEditComponent implements OnInit {
   whouses: WhouseLookup[] = [];
   documentTypes: DocumentTypeLookup[] = [];
 
-  // Full datasets (unfiltered) για να κάνουμε φίλτρα
+  // Full datasets
   private allSeries: SeriesLookup[] = [];
   private allWhouses: WhouseLookup[] = [];
-
-  // κρατάμε το τελευταίο branch για να ξέρουμε αν είναι πραγματική αλλαγή
   private lastBranchId: number | null = null;
+
+  // ===== Customer autocomplete state =====
+  customerQuery = '';
+  customerResults: CustomerResponse[] = [];
+  customerLoading = false;
+  customerDropdownOpen = false;
+  selectedCustomer: CustomerResponse | null = null;
+    // ===== Customer dropdown/lookup =====
+  customerSearchText = '';
+  private customerSearch$ = new Subject<string>();
+  private sub = new Subscription();
+
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private service: SalesDocsService,
-    private lookups: SalesDocsLookupsService
+    private lookups: SalesDocsLookupsService,
+    private customers: CustomersService
   ) {}
 
-  ngOnInit(): void {
-    this.loadLookups();
+ ngOnInit(): void {
+  this.loadLookups();
+  this.setupCustomerSearch();
 
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam && idParam !== 'new') {
-      this.docId = +idParam;
-      this.loadDocument(this.docId);
-    } else {
-      this.addLine();
-    }
+  const idParam = this.route.snapshot.paramMap.get('id');
+  if (idParam && idParam !== 'new') {
+    this.docId = +idParam;
+    this.loadDocument(this.docId);
+  } else {
+    this.addLine();
   }
+}
+
+ngOnDestroy(): void {
+  this.sub.unsubscribe();
+}
 
   setTab(tab: ActiveTab): void {
     this.activeTab = tab;
@@ -122,7 +143,7 @@ export class SalesDocsEditComponent implements OnInit {
     this.lookups.getSeries().subscribe({
       next: (s) => {
         this.allSeries = s ?? [];
-        this.applyBranchFilter(false); // ΜΗΝ μηδενίζεις εδώ
+        this.applyBranchFilter(false);
       },
       error: (err) => console.error('Error loading series', err),
     });
@@ -140,7 +161,7 @@ export class SalesDocsEditComponent implements OnInit {
     this.lookups.getWhouses().subscribe({
       next: (w) => {
         this.allWhouses = w ?? [];
-        this.applyBranchFilter(false); // ΜΗΝ μηδενίζεις εδώ
+        this.applyBranchFilter(false);
       },
       error: (err) => console.error('Error loading whouses', err),
     });
@@ -163,22 +184,16 @@ export class SalesDocsEditComponent implements OnInit {
           documentDate: doc.documentDate,
           branchId: doc.branchId,
           ax: '',
-
           seriesId: doc.seriesId,
           documentTypeId: doc.documentTypeId,
           docNo: doc.printedNumber ?? (doc.number ? String(doc.number) : ''),
-
           paymentMethodId: doc.paymentMethodId,
           shipKindId: doc.shipKindId,
           traderId: doc.traderId,
-
           documentDomain: 1351,
         };
 
-        // set lastBranchId ώστε να μην “θεωρήσει” αλλαγή branch στο αρχικό render
         this.lastBranchId = this.header.branchId;
-
-        // φιλτράρουμε με βάση το branch, ΧΩΡΙΣ reset
         this.applyBranchFilter(false);
 
         if (doc.mtrdoc) {
@@ -207,6 +222,19 @@ export class SalesDocsEditComponent implements OnInit {
           })) ?? [];
 
         if (this.lines.length === 0) this.addLine();
+
+        // load customer label for edit
+        if (this.header.traderId) {
+          this.customers.get(this.header.traderId).subscribe({
+            next: (c) => {
+              this.selectedCustomer = c;
+              this.customerQuery = this.formatCustomer(c);
+            },
+            error: () => {
+              // αν δεν βρεθεί, απλά αφήνουμε το query κενό
+            },
+          });
+        }
       },
       error: (err) => {
         console.error('Error loading document', err);
@@ -217,58 +245,126 @@ export class SalesDocsEditComponent implements OnInit {
 
   // ========= AUTOMATIONS =========
 
-  // Καλείται όταν αλλάζει branch από το UI
   onBranchChange(branchId: number | null): void {
-  if (this.lastBranchId === branchId) return;
-  this.lastBranchId = branchId;
+    if (this.lastBranchId === branchId) return;
+    this.lastBranchId = branchId;
 
-  this.delivery.whouseId = null;
-  this.header.seriesId = null;
-  this.header.documentTypeId = null;
+    // reset εξαρτώμενων
+    this.delivery.whouseId = null;
+    this.header.seriesId = null;
+    this.header.documentTypeId = null;
 
-  this.applyBranchFilter(true); // 👈 user action
-}
+    this.applyBranchFilter(true); // ✅ user action -> auto first whouse
+  }
 
-  // Καλείται όταν αλλάζει σειρά
   onSeriesChange(seriesId: number | null): void {
     if (!seriesId) {
       this.header.documentTypeId = null;
       return;
     }
 
-    const s = this.allSeries.find((x) => x.id === this.header.seriesId);    
-    this.header.documentTypeId = s?.documentType?.id ?? null;
-    
-    
+    const s = this.allSeries.find((x) => x.id === seriesId);
+    // IMPORTANT: ανάλογα με το shape σου (documentTypeId ή documentType?.id)
+    // Αν έχεις documentTypeId:
+    if ((s as any)?.documentTypeId !== undefined) {
+      this.header.documentTypeId = (s as any).documentTypeId ?? null;
+      return;
+    }
+    // Αν έχεις documentType object:
+    this.header.documentTypeId = (s as any)?.documentType?.id ?? null;
   }
 
-  // Φιλτράρει series/whouses βάσει branchId
-private applyBranchFilter(userAction: boolean): void {
-  const branchId = this.header.branchId;
+  private applyBranchFilter(userAction: boolean): void {
+    const branchId = this.header.branchId;
 
-  if (!branchId) {
-    this.series = [...this.allSeries];
-    this.whouses = [...this.allWhouses];
+    if (!branchId) {
+      this.series = [...this.allSeries];
+      this.whouses = [...this.allWhouses];
+      return;
+    }
 
-    // αν θες, όταν δεν υπάρχει branch μην επιλέγεις τίποτα:
-    // this.delivery.whouseId = null;
+    // Series: το δικό σου backend στέλνει branch ως object (branch?.id)
+    this.series = this.allSeries.filter((s: any) => s.branch?.id === branchId);
 
-    return;
+    // Whouses: στο δικό σου interface έχει branchId:number
+    this.whouses = this.allWhouses.filter((w) => w.branchId === branchId);
+
+    // ✅ auto pick πρώτο whouse όταν ο χρήστης άλλαξε branch
+    if (userAction) {
+      this.delivery.whouseId = this.whouses.length ? this.whouses[0].id : null;
+    }
   }
 
-  // SERIES by branch object
-  this.series = this.allSeries.filter(s => s.branch?.id === branchId);
+  // ========= CUSTOMER AUTOCOMPLETE =========
 
-  // WHOUSES by branchId (εδώ βάλε το σωστό property που έχει το WhouseLookup σου)
-  this.whouses = this.allWhouses.filter(w => w.branchId === branchId);
-  // Αν αντί για branchId έχει branch object, χρησιμοποίησε:
-  // this.whouses = this.allWhouses.filter(w => w.branch?.id === branchId);
+private setupCustomerSearch(): void {
+  const s = this.customerSearch$
+    .pipe(
+      debounceTime(250),
+      distinctUntilChanged(),
+      switchMap((q) => {
+        const term = (q ?? '').trim();
+        this.customerLoading = true;
 
-  // ✅ auto-select πρώτο whouse ΜΟΝΟ όταν το branch άλλαξε από τον χρήστη
-  if (userAction) {
-    this.delivery.whouseId = this.whouses.length ? this.whouses[0].id : null;
+        // Αν είναι κενό, φέρε “λίστα” (πρώτη σελίδα)
+        return this.customers.searchLookup(term, 30).pipe(
+          catchError((err) => {
+            console.error('Customer search error', err);
+            return of([]);
+          }),
+          tap(() => (this.customerLoading = false))
+        );
+      })
+    )
+    .subscribe((res) => {
+      this.customerResults = res ?? [];
+    });
+
+  this.sub.add(s);
+}
+
+  toggleCustomerDropdown(): void {
+  this.customerDropdownOpen = !this.customerDropdownOpen;
+
+  if (this.customerDropdownOpen) {
+    // όταν ανοίξει, φέρνουμε αρχική λίστα (χωρίς φίλτρο)
+    this.customerSearchText = '';
+    this.customerSearch$.next('');
   }
 }
+
+ onCustomerSearchTextChange(v: string): void {
+  this.customerSearchText = v;
+
+  // όταν γράφει, θεωρούμε ότι ψάχνει νέο πελάτη
+  this.selectedCustomer = null;
+  this.header.traderId = null;
+
+  this.customerSearch$.next(v);
+}
+
+  selectCustomer(c: CustomerResponse): void {
+  this.selectedCustomer = c;
+  this.header.traderId = c.id;
+
+  // κλείσε dropdown και δείξε “label”
+  this.customerDropdownOpen = false;
+  this.customerSearchText = '';
+}
+
+clearCustomer(): void {
+  this.selectedCustomer = null;
+  this.header.traderId = null;
+  this.customerSearchText = '';
+  this.customerResults = [];
+}
+
+  private formatCustomer(c: CustomerResponse): string {
+    const parts: string[] = [];
+    if (c.code) parts.push(c.code);
+    if (c.name) parts.push(c.name);
+    return parts.join(' - ');
+  }
 
   // ========= LINES =========
   addLine(): void {

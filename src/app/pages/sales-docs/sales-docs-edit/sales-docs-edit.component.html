@@ -125,7 +125,88 @@
 
         <!-- 3η γραμμή -->
         <div class="row g-2 mb-3">
-          <div class="col-6">
+
+        <div class="row g-2 mb-3">
+  <div class="col-6 position-relative">
+    <label class="form-label form-label-sm">Πελάτης</label>
+
+    <div class="input-group input-group-sm">
+      <!-- Display selected -->
+      <input
+        type="text"
+        class="form-control"
+        [value]="selectedCustomer ? (selectedCustomer.code + ' - ' + selectedCustomer.name) : ''"
+        placeholder="-- Επιλογή πελάτη --"
+        readonly
+      />
+
+      <!-- Dropdown button -->
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        (click)="toggleCustomerDropdown()"
+        title="Επιλογή/Αναζήτηση πελάτη"
+      >
+        ▾
+      </button>
+
+      <!-- Clear -->
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        (click)="clearCustomer()"
+        [disabled]="!header.traderId"
+        title="Καθαρισμός"
+      >
+        ✕
+      </button>
+    </div>
+
+    <!-- Dropdown panel -->
+    <div
+      class="dropdown-menu show w-100 mt-1 p-2"
+      *ngIf="customerDropdownOpen"
+      style="max-height: 340px; overflow: auto;"
+    >
+      <!-- Search input inside dropdown -->
+      <input
+        type="text"
+        class="form-control form-control-sm mb-2"
+        [ngModel]="customerSearchText"
+        (ngModelChange)="onCustomerSearchTextChange($event)"
+        name="customerSearchText"
+        placeholder="Αναζήτηση με κωδικό, όνομα, τηλ, email..."
+        autocomplete="off"
+      />
+
+      <div class="small text-muted mb-2" *ngIf="customerLoading">
+        Αναζήτηση...
+      </div>
+
+      <button
+        type="button"
+        class="dropdown-item"
+        *ngFor="let c of customerResults"
+        (click)="selectCustomer(c)"
+      >
+        <b>{{ c.code }}</b> - {{ c.name }}
+        <span class="text-muted" *ngIf="c.phone"> · {{ c.phone }}</span>
+        <span class="text-muted" *ngIf="c.email"> · {{ c.email }}</span>
+      </button>
+
+      <div class="dropdown-item text-muted" *ngIf="!customerLoading && customerResults.length === 0">
+        Δεν βρέθηκαν αποτελέσματα
+      </div>
+    </div>
+
+    <div class="small text-muted mt-1" *ngIf="header.traderId">
+      Επιλεγμένος ID: <b>{{ header.traderId }}</b>
+    </div>
+  </div>
+</div>
+
+
+          <div class="col-4">
             <label class="form-label form-label-sm">Τρόπος Πληρωμής</label>
             <select
               class="form-select form-select-sm"
@@ -139,7 +220,7 @@
             </select>
           </div>
 
-          <div class="col-6">
+          <div class="col-4">
             <label class="form-label form-label-sm">Τρόπος Αποστολής</label>
             <select
               class="form-select form-select-sm"
@@ -156,16 +237,7 @@
 
         <!-- 4η γραμμή -->
         <div class="row g-2 mb-3">
-          <div class="col-6">
-            <label class="form-label form-label-sm">Πελάτης (id)</label>
-            <input
-              type="number"
-              class="form-control form-control-sm"
-              [(ngModel)]="header.traderId"
-              name="traderId"
-              placeholder="π.χ. 123"
-            />
-          </div>
+          
         </div>
 
         <h6 class="mt-3 mb-2 small text-secondary">Γραμμές Παραστατικού</h6>
