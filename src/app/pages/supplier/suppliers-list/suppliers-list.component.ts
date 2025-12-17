@@ -66,6 +66,7 @@ export class SuppliersListComponent implements OnInit {
         c.code.toLowerCase().includes(term) ||
         c.name.toLowerCase().includes(term) ||
         (c.phone && c.phone.toLowerCase().includes(term)) ||
+        (c.cellphone && c.cellphone.toLowerCase().includes(term)) ||
         (c.city && c.city.toLowerCase().includes(term)) ||
         (c.countryName && c.countryName.toLowerCase().includes(term))
       );

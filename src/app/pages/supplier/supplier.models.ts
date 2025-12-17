@@ -6,6 +6,8 @@ export interface SupplierResponse {
   code: string;
   name: string;
   phone?: string | null;
+  cellphone?: string | null;
+  email?: string | null;
   address?: string | null;
   city?: string | null;
   zip?: string | null;
@@ -24,6 +26,8 @@ export interface SupplierRequest {
   code: string;
   name: string;
   phone?: string | null;
+  cellphone?: string | null;
+  email?: string | null;
   address?: string | null;
   city?: string | null;
   zip?: string | null;

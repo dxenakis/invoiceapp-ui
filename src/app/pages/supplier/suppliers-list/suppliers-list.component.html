@@ -29,6 +29,8 @@
             <th><span class="x-column-header-text-inner">Κωδικός</span></th>
             <th><span class="x-column-header-text-inner">Επωνυμία</span></th>
             <th><span class="x-column-header-text-inner">Τηλέφωνο</span></th>
+            <th><span class="x-column-header-text-inner">Κινητό</span></th>
+            <th><span class="x-column-header-text-inner">Email</span></th>
             <th><span class="x-column-header-text-inner">Πόλη</span></th>
             <th><span class="x-column-header-text-inner">Χώρα</span></th>
           </tr>
@@ -42,8 +44,10 @@
             [class.selected]="supplier === selectedSupplier"
           >
             <td>{{ supplier.code }}</td>
-            <td>{{ supplier.name }}</td>
+            <td>{{ supplier.name }}</td>            
             <td>{{ supplier.phone || '-' }}</td>
+            <td>{{ supplier.cellphone || '-' }}</td>
+            <td>{{ supplier.email || '-' }}</td>
             <td>{{ supplier.city || '' }}</td>
             <td>{{ supplier.countryName || (supplier.countryId || '') }}</td>
           </tr>
