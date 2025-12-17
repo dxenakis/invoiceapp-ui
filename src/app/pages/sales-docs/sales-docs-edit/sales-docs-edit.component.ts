@@ -3,11 +3,10 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, Subscription, of } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, switchMap, tap } from 'rxjs/operators';
 import { CrudFormToolbarComponent } from '../../../layout/crud-form-toolbar/crud-form-toolbar.component';
 import { CustomersService } from '../../customer/customers.service';
 import { CustomerResponse } from '../../customer/customer.models';
-
 
 import {
   FindocResponse,
@@ -27,8 +26,6 @@ import {
   DocumentTypeLookup,
 } from '../sales-docs-lookups.service';
 
-
-
 type ActiveTab = 'doc' | 'delivery';
 
 @Component({
@@ -44,8 +41,6 @@ export class SalesDocsEditComponent implements OnInit, OnDestroy {
   loading = false;
 
   activeTab: ActiveTab = 'doc';
-
-
 
   // Header (UI fields)
   header = {
@@ -92,17 +87,15 @@ export class SalesDocsEditComponent implements OnInit, OnDestroy {
   private allWhouses: WhouseLookup[] = [];
   private lastBranchId: number | null = null;
 
-  // ===== Customer autocomplete state =====
-  customerQuery = '';
+  // ===== Customer dropdown/lookup =====
   customerResults: CustomerResponse[] = [];
   customerLoading = false;
   customerDropdownOpen = false;
   selectedCustomer: CustomerResponse | null = null;
-    // ===== Customer dropdown/lookup =====
+
   customerSearchText = '';
   private customerSearch$ = new Subject<string>();
   private sub = new Subscription();
-
 
   constructor(
     private route: ActivatedRoute,
@@ -112,22 +105,22 @@ export class SalesDocsEditComponent implements OnInit, OnDestroy {
     private customers: CustomersService
   ) {}
 
- ngOnInit(): void {
-  this.loadLookups();
-  this.setupCustomerSearch();
+  ngOnInit(): void {
+    this.loadLookups();
+    this.setupCustomerSearch();
 
-  const idParam = this.route.snapshot.paramMap.get('id');
-  if (idParam && idParam !== 'new') {
-    this.docId = +idParam;
-    this.loadDocument(this.docId);
-  } else {
-    this.addLine();
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam && idParam !== 'new') {
+      this.docId = +idParam;
+      this.loadDocument(this.docId);
+    } else {
+      this.addLine();
+    }
   }
-}
 
-ngOnDestroy(): void {
-  this.sub.unsubscribe();
-}
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+  }
 
   setTab(tab: ActiveTab): void {
     this.activeTab = tab;
@@ -228,10 +221,9 @@ ngOnDestroy(): void {
           this.customers.get(this.header.traderId).subscribe({
             next: (c) => {
               this.selectedCustomer = c;
-              this.customerQuery = this.formatCustomer(c);
             },
             error: () => {
-              // αν δεν βρεθεί, απλά αφήνουμε το query κενό
+              // αν δεν βρεθεί, απλά αφήνουμε το selectedCustomer null
             },
           });
         }
@@ -244,7 +236,6 @@ ngOnDestroy(): void {
   }
 
   // ========= AUTOMATIONS =========
-
   onBranchChange(branchId: number | null): void {
     if (this.lastBranchId === branchId) return;
     this.lastBranchId = branchId;
@@ -254,7 +245,7 @@ ngOnDestroy(): void {
     this.header.seriesId = null;
     this.header.documentTypeId = null;
 
-    this.applyBranchFilter(true); // ✅ user action -> auto first whouse
+    this.applyBranchFilter(true); // user action -> auto first whouse
   }
 
   onSeriesChange(seriesId: number | null): void {
@@ -264,13 +255,10 @@ ngOnDestroy(): void {
     }
 
     const s = this.allSeries.find((x) => x.id === seriesId);
-    // IMPORTANT: ανάλογα με το shape σου (documentTypeId ή documentType?.id)
-    // Αν έχεις documentTypeId:
     if ((s as any)?.documentTypeId !== undefined) {
       this.header.documentTypeId = (s as any).documentTypeId ?? null;
       return;
     }
-    // Αν έχεις documentType object:
     this.header.documentTypeId = (s as any)?.documentType?.id ?? null;
   }
 
@@ -283,87 +271,84 @@ ngOnDestroy(): void {
       return;
     }
 
-    // Series: το δικό σου backend στέλνει branch ως object (branch?.id)
     this.series = this.allSeries.filter((s: any) => s.branch?.id === branchId);
-
-    // Whouses: στο δικό σου interface έχει branchId:number
     this.whouses = this.allWhouses.filter((w) => w.branchId === branchId);
 
-    // ✅ auto pick πρώτο whouse όταν ο χρήστης άλλαξε branch
     if (userAction) {
       this.delivery.whouseId = this.whouses.length ? this.whouses[0].id : null;
     }
   }
 
-  // ========= CUSTOMER AUTOCOMPLETE =========
+  // ========= CUSTOMER DROPDOWN / SEARCH =========
+  private setupCustomerSearch(): void {
+    const s = this.customerSearch$
+      .pipe(
+        debounceTime(250),
+        // δεν βάζουμε distinctUntilChanged() γιατί μετά από clear+reopen μπορεί να
+        // χρειαστεί να ξανακάνουμε fetch το ίδιο '' (λίστα) και να μην “κολλάει”.
+        switchMap((q) => {
+          const term = (q ?? '').trim();
+          this.customerLoading = true;
 
-private setupCustomerSearch(): void {
-  const s = this.customerSearch$
-    .pipe(
-      debounceTime(250),
-      distinctUntilChanged(),
-      switchMap((q) => {
-        const term = (q ?? '').trim();
-        this.customerLoading = true;
+          return this.customers.searchLookup(term, 30).pipe(
+            catchError((err) => {
+              console.error('Customer search error', err);
+              return of([]);
+            }),
+            tap(() => (this.customerLoading = false))
+          );
+        })
+      )
+      .subscribe((res) => {
+        this.customerResults = res ?? [];
+      });
 
-        // Αν είναι κενό, φέρε “λίστα” (πρώτη σελίδα)
-        return this.customers.searchLookup(term, 30).pipe(
-          catchError((err) => {
-            console.error('Customer search error', err);
-            return of([]);
-          }),
-          tap(() => (this.customerLoading = false))
-        );
-      })
-    )
-    .subscribe((res) => {
-      this.customerResults = res ?? [];
-    });
-
-  this.sub.add(s);
-}
+    this.sub.add(s);
+  }
 
   toggleCustomerDropdown(): void {
-  this.customerDropdownOpen = !this.customerDropdownOpen;
+    this.customerDropdownOpen = !this.customerDropdownOpen;
 
-  if (this.customerDropdownOpen) {
-    // όταν ανοίξει, φέρνουμε αρχική λίστα (χωρίς φίλτρο)
-    this.customerSearchText = '';
-    this.customerSearch$.next('');
+    if (this.customerDropdownOpen) {
+      // όταν ανοίξει, φέρνουμε πάντα αρχική λίστα (χωρίς φίλτρο)
+      this.customerSearchText = '';
+      this.customerSearch$.next('');
+    }
   }
-}
 
- onCustomerSearchTextChange(v: string): void {
-  this.customerSearchText = v;
+  onCustomerSearchTextChange(v: string): void {
+    this.customerSearchText = v;
 
-  // όταν γράφει, θεωρούμε ότι ψάχνει νέο πελάτη
-  this.selectedCustomer = null;
-  this.header.traderId = null;
+    // Μόλις αρχίσει να ψάχνει, καθαρίζουμε την επιλογή (αν υπήρχε)
+    if (this.selectedCustomer || this.header.traderId) {
+      this.selectedCustomer = null;
+      this.header.traderId = null;
+    }
 
-  this.customerSearch$.next(v);
-}
+    this.customerSearch$.next(v);
+  }
 
   selectCustomer(c: CustomerResponse): void {
-  this.selectedCustomer = c;
-  this.header.traderId = c.id;
+    this.selectedCustomer = c;
+    this.header.traderId = c.id;
 
-  // κλείσε dropdown και δείξε “label”
-  this.customerDropdownOpen = false;
-  this.customerSearchText = '';
-}
+    this.applyCustomerToDelivery(c);
 
-clearCustomer(): void {
-  this.selectedCustomer = null;
-  this.header.traderId = null;
-  this.customerSearchText = '';
-  this.customerResults = [];
-}
+    this.customerDropdownOpen = false;
+    this.customerSearchText = '';
+  }
 
-  private formatCustomer(c: CustomerResponse): string {
-    const parts: string[] = [];
-    if (c.code) parts.push(c.code);
-    if (c.name) parts.push(c.name);
-    return parts.join(' - ');
+  clearCustomer(): void {
+    this.selectedCustomer = null;
+    this.header.traderId = null;
+    this.customerSearchText = '';
+
+    // Αν είναι ανοιχτό, ξαναφόρτωσε λίστα ώστε να μη μείνει άδειο
+    if (this.customerDropdownOpen) {
+      this.customerSearch$.next('');
+    } else {
+      this.customerResults = [];
+    }
   }
 
   // ========= LINES =========
@@ -460,4 +445,22 @@ clearCustomer(): void {
   delete(): void {
     alert('Η διαγραφή παραστατικού δεν έχει υλοποιηθεί ακόμα.');
   }
+
+
+private applyCustomerToDelivery(customer: any): void {
+  if (!customer) return;
+
+  // Overwrite ΜΟΝΟ αυτών των πεδίων, κάθε φορά που αλλάζει ο πελάτης
+  const addr = (customer.address ?? customer.adress ?? '').trim();
+  const city = (customer.city ?? '').trim();
+  const zip = (customer.zip ?? customer.postalCode ?? '').trim();
+
+  this.delivery.addressLine1 = addr || null;
+  this.delivery.city = city || null;
+  this.delivery.region = city || null;
+  this.delivery.postalCode = zip || null;
+}
+
+
+
 }

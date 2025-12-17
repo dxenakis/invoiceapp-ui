@@ -29,6 +29,8 @@
             <th><span class="x-column-header-text-inner">Κωδικός</span></th>
             <th><span class="x-column-header-text-inner">Επωνυμία</span></th>
             <th><span class="x-column-header-text-inner">Τηλέφωνο</span></th>
+            <th><span class="x-column-header-text-inner">Κινητό</span></th>
+            <th><span class="x-column-header-text-inner">Email</span></th>
             <th><span class="x-column-header-text-inner">Πόλη</span></th>
             <th><span class="x-column-header-text-inner">Χώρα</span></th>
           </tr>
@@ -42,8 +44,10 @@
             [class.selected]="customer === selectedCustomer"
           >
             <td>{{ customer.code }}</td>
-            <td>{{ customer.name }}</td>
+            <td>{{ customer.name }}</td>            
             <td>{{ customer.phone || '-' }}</td>
+            <td>{{ customer.cellphone || '-' }}</td>
+            <td>{{ customer.email || '-' }}</td>
             <td>{{ customer.city || '' }}</td>
             <td>{{ customer.countryName || (customer.countryId || '') }}</td>
           </tr>

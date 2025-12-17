@@ -22,6 +22,8 @@ export class CustomersEditComponent implements OnInit {
     code: '',
     name: '',
     phone: '',
+    cellphone: '',
+    email: '',
     address: '',
     city: '',
     zip: '',
@@ -70,6 +72,8 @@ export class CustomersEditComponent implements OnInit {
           code: res.code,
           name: res.name,
           phone: res.phone ?? '',
+          cellphone: res.cellphone ?? '',
+          email: res.email ?? '',
           address: res.address ?? '',
           city: res.city ?? '',
           zip: res.zip ?? '',
@@ -105,9 +109,12 @@ export class CustomersEditComponent implements OnInit {
 
     const obs = this.customerId
       ? this.customersService.update(this.customerId, req)
+      
       : this.customersService.create(req);
-
-    obs.subscribe({
+   
+     console.log(req)
+   
+      obs.subscribe({
       next: () => {
         this.saving = false;
         this.router.navigate(['/app/customers']);

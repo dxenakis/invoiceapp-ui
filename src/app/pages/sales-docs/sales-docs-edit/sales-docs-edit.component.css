@@ -58,3 +58,54 @@
   border-color: #9bb7ff;
   color: #1f2937;
 }
+
+/* Bootstrap dropdown-item κάνει nowrap/ellipsis, αυτό χαλάει το grid */
+.customer-dropdown .customer-option {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+}
+
+/* εδώ κάνουμε την στοίχιση */
+.customer-dropdown .customer-row {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) auto; /* code | name | extras */
+  gap: 0.6rem;
+  align-items: center;
+}
+
+/* Κωδικός: όχι bold */
+.customer-dropdown .customer-code {
+  font-weight: 400 !important;
+  font-variant-numeric: tabular-nums;
+  color: #111827;
+  white-space: nowrap;
+}
+
+.customer-dropdown .customer-sep {
+  color: #9ca3af;
+}
+
+/* Όνομα: να κόβει με ... αν είναι μεγάλο */
+.customer-dropdown .customer-name {
+  font-weight: 400;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0; /* απαραίτητο για ellipsis μέσα σε grid */
+}
+
+/* Extras: πάντα δεξιά, να μην σπάει γραμμή */
+.customer-dropdown .customer-extra {
+  color: #6b7280;
+  font-size: 0.85em;
+  white-space: nowrap;
+  justify-self: end;
+}
+/* Προαιρετικό: hover να μην “σπρώχνει” τίποτα */
+.customer-dropdown .customer-option:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
